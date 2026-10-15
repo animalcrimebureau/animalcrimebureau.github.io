@@ -17,11 +17,12 @@ a:focus-visible{outline:2px solid var(--rubric);outline-offset:3px}
 ::selection{background:var(--wash)}
 img{max-width:100%;height:auto;display:block}
 [lang="ar"]{font-family:var(--ar)}
+[lang="en"]{font-family:var(--serif)}
 .wrap{max-width:68rem;margin-inline:auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
 .on-night{background:var(--night);color:var(--night-ink)}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 .mail{user-select:all}
-.skip{position:absolute;left:16px;top:-4rem;z-index:5;background:var(--paper);color:var(--ink);padding:.35rem .7rem;border:1px solid var(--rule)}
+.skip{position:absolute;inset-inline-start:16px;top:-4rem;z-index:5;background:var(--paper);color:var(--ink);padding:.35rem .7rem;border:1px solid var(--rule)}
 .skip:focus{top:.6rem}
 
 .site-head{border-bottom:var(--frame);padding-top:env(safe-area-inset-top,0px)}
@@ -33,6 +34,8 @@ img{max-width:100%;height:auto;display:block}
 .nav a{text-decoration:none}
 .nav a:hover{text-decoration:underline}
 .nav a[aria-current="page"]{text-decoration:underline;text-decoration-thickness:1.5px;text-underline-offset:.4em}
+.nav .lang{padding-inline-start:1.25rem;border-inline-start:1px solid var(--hair)}
+.nav .lang a[lang="ar"]{font-size:1.12em}
 
 /* Section headings: sentence case under a printed rule */
 .sec{font-size:clamp(1.35rem,2.4vw,1.7rem);font-weight:500;line-height:1.2;margin:3.6rem 0 1.1rem;padding-top:.7rem;border-top:1px solid var(--rule)}
@@ -43,10 +46,12 @@ img{max-width:100%;height:auto;display:block}
 .intro{font-size:clamp(1.2rem,2.1vw,1.42rem);line-height:1.5;max-width:34em;margin:1.3rem 0 0}
 .measure-lead{font-size:clamp(1.3rem,2.6vw,1.7rem);line-height:1.35;max-width:30em;margin:0 0 1.5rem;text-wrap:pretty}
 .pair{display:grid;gap:1.1rem;border:var(--frame);padding:1.2rem 1.25rem}
-@media(min-width:52rem){.pair{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:0}.pair .text-ar:first-child{padding-right:1.4rem}.pair .text-ar+.text-ar{border-left:1px solid var(--hair);padding-left:1.4rem}}
+@media(min-width:52rem){.pair{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:0}.pair .text-ar:first-child{padding-right:1.4rem}.pair .text-ar+.text-ar{border-left:1px solid var(--hair);padding-left:1.4rem}
+  [dir="rtl"] .pair .text-ar:first-child{padding-right:0;padding-left:1.4rem}[dir="rtl"] .pair .text-ar+.text-ar{border-left:0;border-right:1px solid var(--hair);padding-left:0;padding-right:1.4rem}}
 .text-ar{font-family:var(--ar);font-size:1.3rem;line-height:2.1;min-width:0}
 .text-ar p{margin:0}
-.text-ar .src{font-family:var(--serif);font-size:.9rem;line-height:1.5;color:var(--ink-2);direction:ltr;text-align:right;margin-bottom:.35rem}
+.text-ar .src{font-size:.95rem;line-height:1.6;color:var(--ink-2);margin-bottom:.35rem}
+.text-ar .src[lang="en"]{font-size:.9rem;line-height:1.5;direction:ltr;text-align:right}
 .sh{text-decoration-line:underline;text-decoration-color:var(--rubric);text-decoration-thickness:1.5px;text-underline-offset:.6em;text-decoration-skip-ink:none}
 .measure.replay .sh{text-decoration-color:transparent}
 .measure.replay.run .sh{text-decoration-color:var(--rubric);transition:text-decoration-color .35s ease calc(var(--i,0) * 70ms)}
@@ -63,8 +68,8 @@ img{max-width:100%;height:auto;display:block}
 /* Tables */
 .tablewrap{overflow-x:auto;-webkit-overflow-scrolling:touch;border-top:2px solid var(--rule);border-bottom:2px solid var(--rule)}
 table{border-collapse:collapse;width:100%;min-width:52rem;font-size:1rem}
-th{font-weight:400;font-style:italic;color:var(--ink-2);text-align:left;padding:.65rem 1rem .4rem 0;white-space:nowrap}
-td{padding:.55rem 1rem .7rem 0;vertical-align:baseline;border-top:1px solid var(--hair)}
+th{font-weight:400;font-style:italic;color:var(--ink-2);text-align:start;padding-block:.65rem .4rem;padding-inline:0 1rem;white-space:nowrap}
+td{padding-block:.55rem .7rem;padding-inline:0 1rem;vertical-align:baseline;border-top:1px solid var(--hair)}
 td:first-child a{white-space:nowrap}
 .ev{color:var(--rubric);white-space:nowrap}
 
@@ -99,8 +104,8 @@ td:first-child a{white-space:nowrap}
 .prose{max-width:38em;margin:0 0 1rem}
 .lead{font-size:1.35rem;line-height:1.45}
 .plain{list-style:none;padding:0;margin:0;display:grid;gap:.4rem}
-.std li{padding-left:1.3rem;position:relative;max-width:38em}
-.std li::before{content:"";position:absolute;left:0;top:.75em;width:.55rem;height:1.5px;background:var(--rubric)}
+.std li{padding-inline-start:1.3rem;position:relative;max-width:38em}
+.std li::before{content:"";position:absolute;inset-inline-start:0;top:.75em;width:.55rem;height:1.5px;background:var(--rubric)}
 .updated{color:var(--ink-2);font-size:.95rem;margin-top:2.5rem}
 
 /* About */
@@ -146,17 +151,17 @@ td:first-child a{white-space:nowrap}
 .cl .en{margin:.15rem 0 0;color:var(--ink-2);font-size:1.02rem;line-height:1.5}
 .cl .en b{color:var(--ink);font-weight:600}
 .ref,.back{text-decoration:none}
-.cl .ref{margin-left:.25em}
-.back{margin-right:.4em}
+.cl .ref{margin-inline-start:.25em}
+.back{margin-inline-end:.4em}
 .nt{color:var(--rubric);font-size:.98rem;line-height:1.5;border-left:var(--frame);border-right:var(--frame);padding:0 1.1rem .7rem;min-width:0}
 .nt [lang="ar"]{font-size:1.08em}
 div.nt:empty{display:none}
-.gl{margin:0;border-left:1.5px solid var(--rubric);padding-left:.8rem}
+.gl{margin:0;border-inline-start:1.5px solid var(--rubric);padding-inline-start:.8rem}
 .cl:target,.nt:target .gl{background:var(--wash)}
 @media(min-width:56rem){
   .article{grid-template-columns:minmax(0,1fr) 16rem;column-gap:1.2rem}
   .cl{padding-left:1.7rem;padding-right:1.7rem}
-  .nt{border-right:0;border-left:1.5px solid var(--rubric);padding:.75rem 0 .9rem 1.1rem}
+  .nt{border-inline-end:0;border-inline-start:1.5px solid var(--rubric);padding-block:.75rem .9rem;padding-inline:1.1rem 0}
   div.nt:empty{display:block}
   .gl{border:0;padding:0}
 }
@@ -170,3 +175,16 @@ div.nt:empty{display:none}
 .foot-row p{margin:0}
 .foot-row .mark{color:var(--ink);font-size:1.1rem}
 .foot-links{display:flex;flex-wrap:wrap;gap:.2rem 1.2rem}
+
+/* Arabic edition: Amiri for running text, no synthetic italics, taller lines */
+html[lang="ar"] body{font-size:1.2rem;line-height:1.95}
+html[lang="ar"] .thesis{font-size:clamp(1.9rem,5vw,3.25rem);line-height:1.5;max-width:18em}
+html[lang="ar"] .intro,html[lang="ar"] .measure-lead,html[lang="ar"] .lead,html[lang="ar"] .law-sum{line-height:1.8}
+html[lang="ar"] .page-h{line-height:1.35}
+html[lang="ar"] .sec{line-height:1.5}
+html[lang="ar"] .fields dd{line-height:1.7}
+html[lang="ar"] .plate figcaption{line-height:1.7}
+html[lang="ar"] th,html[lang="ar"] .fields dt,html[lang="ar"] .plate-meta .lbl,html[lang="ar"] .grades em,html[lang="ar"] .art-sub{font-style:normal}
+html[lang="ar"] .nt{font-size:1.05rem;line-height:1.75}
+html[lang="ar"] .after h2{font-weight:700}
+html[lang="ar"] .grades li{grid-template-columns:1.75rem minmax(0,1fr)}
