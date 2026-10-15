@@ -106,9 +106,11 @@ td:first-child a{white-space:nowrap}
 .about-grid .lead{margin:0}
 .portrait{margin:0;max-width:15rem}
 .portrait img{width:100%}
-.portrait figcaption{font-size:1.15rem;line-height:1.6;color:var(--ink-2);margin-top:.3rem;text-align:left}
+/* Mochi: the one photograph on paper. Where an exhibit carries its case number, he carries his name. */
+.portrait figcaption{color:var(--rubric);font-size:.98rem;margin-top:.7rem}
+.way{font-size:1.25rem}
 .about-body .sec:first-of-type{margin-top:2.8rem}
-@media(min-width:52rem){.about-grid{grid-template-columns:minmax(0,1fr) 17rem}.about-grid .lead{grid-column:1;grid-row:1}.portrait{grid-column:2;grid-row:1 / span 2;max-width:none}.about-body{grid-column:1;grid-row:2}}
+@media(min-width:52rem){.about-grid{grid-template-columns:minmax(0,1fr) 17rem;grid-template-rows:auto 1fr}.about-grid .lead{grid-column:1;grid-row:1}.portrait{grid-column:2;grid-row:1 / span 2;max-width:none}.about-body{grid-column:1;grid-row:2}}
 
 /* Register */
 .rec{margin-top:3.5rem}
