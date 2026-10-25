@@ -27,15 +27,17 @@ Then, from the repository root:
 node tools/images.mjs   # only after adding a page or changing a title: icons and link previews
 node tools/build.mjs    # every page, the sitemap, the app files, the register as CSV and JSON
 node tools/check.mjs    # links, anchors, headings, previews and app files
-node tools/test.mjs     # the site in a browser: ledger, record links, citations, offline, phone
+node tools/test.mjs     # the site in a browser: ledger, citations, offline, install, phone, print, accessibility
 ```
 
-`tools/images.mjs` and `tools/test.mjs` need Playwright and its Chromium. The
-other two need only Node. The build stops and lists the problem if a source is
-incomplete, for example a record without its Arabic text or a provision that
-`provisions.json` does not have. On every pull request, GitHub runs the build and
-the check (`.github/workflows/check.yml`) and fails if the committed pages differ
-from what the sources build.
+`tools/images.mjs` and `tools/test.mjs` need Playwright and its Chromium, and the
+accessibility part of the test needs axe-core (`npm install --no-save axe-core`).
+The other two need only Node. The build stops and lists the problem if a source
+is incomplete, for example a record without its Arabic text or a provision that
+`provisions.json` does not have. On every pull request, GitHub runs all four
+(`.github/workflows/check.yml`, without the images) and fails if the committed
+pages differ from what the sources build, if a link breaks, or if a page stops
+working in the browser or meeting WCAG 2.1 AA.
 
 ## Common tasks
 
@@ -74,6 +76,15 @@ amends:
 
 The page then shows "Amended 3 November 2026" under its title and the dated list
 below it, and the register's data files carry it.
+
+## Privacy and security
+
+Every page carries a Content Security Policy: scripts, stylesheets, fonts and
+images load only from this site, and the only scripts written into the pages are
+the two lines the build adds, allowed by their hashes. Nothing is fetched from
+another service. The site sets no cookies and has no analytics. Adding anything from elsewhere, such as an embedded video or a
+counter, means changing the policy in `tools/build.mjs` on purpose; the test
+fails otherwise.
 
 ## What the build makes
 

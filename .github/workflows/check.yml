@@ -1,5 +1,6 @@
 # On every pull request and every push to main: the committed pages must be
-# what the sources build, and every link, anchor, preview and app file must resolve.
+# what the sources build, every link, anchor, preview and app file must
+# resolve, and the site must work in a browser and meet WCAG 2.1 AA.
 name: Check the site
 
 on:
@@ -28,3 +29,17 @@ jobs:
           fi
       - name: Links, anchors, headings, previews and app files
         run: node tools/check.mjs
+
+  browser:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install Chromium and the accessibility checker
+        run: |
+          npm install --no-save --no-package-lock playwright@1.63.0 axe-core@4.10.2
+          npx playwright install --with-deps chromium
+      - name: Use the site in a browser
+        run: node tools/test.mjs
