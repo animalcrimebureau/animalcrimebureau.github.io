@@ -1,0 +1,68 @@
+{
+  "id": "/ar/",
+  "name": "Animal Crime Bureau",
+  "short_name": "ACB",
+  "description": "Animal Crime Bureau جهة مستقلة للتحقيق القانوني، توثّق الجرائم الواقعة على الحيوانات وتقيس تطبيق القانون بالمعيار الذي يحيل إليه القانون نفسه.",
+  "lang": "ar",
+  "dir": "rtl",
+  "start_url": "/ar/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#FFFFFF",
+  "theme_color": "#FFFFFF",
+  "icons": [
+    {
+      "src": "/assets/img/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/assets/img/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/assets/img/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "القانون",
+      "url": "/ar/law/",
+      "icons": [
+        {
+          "src": "/assets/img/icon-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "سجل الحالات",
+      "url": "/ar/register/",
+      "icons": [
+        {
+          "src": "/assets/img/icon-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "الإصدارات",
+      "url": "/ar/publications/",
+      "icons": [
+        {
+          "src": "/assets/img/icon-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,32 @@
+[
+  {
+    "id": "ACB/2026/001",
+    "month": "2026-07",
+    "published": "2026-10",
+    "grade": 2,
+    "provision": "penal-357",
+    "related": [
+      "investigation-report-1"
+    ],
+    "en": {
+      "summary": "Dogs killed by poisoning, Damietta, July 2026",
+      "text": "Several independent sources reported dogs killed by poisoning in Damietta Governorate in July 2026. Animal Crime Bureau verified the place and the month.",
+      "month": "July 2026",
+      "governorate": "Damietta",
+      "animals": "Dogs",
+      "documented": "Killed by poisoning",
+      "sources": "Social media posts, including a local news page",
+      "published": "October 2026"
+    },
+    "ar": {
+      "summary": "كلاب قُتلت بالسم، دمياط، يوليو ٢٠٢٦",
+      "text": "أفادت عدة مصادر مستقلة بقتل كلاب بالسم في محافظة دمياط في يوليو ٢٠٢٦. وتحققت <bdi lang=\"en\">Animal Crime Bureau</bdi> من المكان والشهر.",
+      "month": "يوليو ٢٠٢٦",
+      "governorate": "دمياط",
+      "animals": "كلاب",
+      "documented": "القتل بالسم",
+      "sources": "منشورات على وسائل التواصل الاجتماعي، منها صفحة إخبارية محلية",
+      "published": "أكتوبر ٢٠٢٦"
+    }
+  }
+]
