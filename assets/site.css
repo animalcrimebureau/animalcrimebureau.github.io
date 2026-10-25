@@ -76,7 +76,7 @@ body{padding-bottom:calc(var(--tabs) + env(safe-area-inset-bottom,0px))}
 .side-nav .grp{padding:.7rem .75rem .25rem;padding-inline-start:2.7rem;font-size:.75rem;letter-spacing:.03em;color:var(--ink-3)}
 .side-nav .terms{margin:.35rem 0 .5rem}
 .side-nav .terms a{padding-block:.28rem;padding-inline:3.35rem .75rem;font-size:.8125rem;line-height:1.4;color:var(--ink-2)}
-.side-nav .terms a.on{color:var(--ink);border-inline-start-color:var(--line-2);background:none}
+.side-nav .terms a.on{color:var(--ink);border-inline-start-color:var(--ink-2);background:none}
 .terms-key{padding:.5rem .75rem 0;padding-inline-start:3.35rem;font-size:.75rem;line-height:1.45;color:var(--ink-3)}
 .side-foot{margin-top:2rem;padding:1rem .75rem 0;border-top:1px solid var(--line);display:flex;flex-direction:column;align-items:flex-start;gap:.85rem;font-size:.9375rem}
 .lang-side{display:inline-flex;align-items:center;gap:.55rem;color:var(--ink-2);text-decoration:none}

@@ -33,18 +33,24 @@
   });
 
   // Annotated article: the list of definitions in the sidebar follows the one in view.
-  var terms = d.querySelectorAll('.side-nav .terms a');
-  if (terms.length && 'IntersectionObserver' in window) {
-    var byId = {};
-    terms.forEach(function (a) { byId[a.hash.slice(1)] = a; });
-    var seen = new IntersectionObserver(function (entries) {
-      entries.forEach(function (e) {
-        if (!e.isIntersecting) return;
-        terms.forEach(function (a) { a.classList.remove('on'); });
-        byId[e.target.id].classList.add('on');
-      });
-    }, { rootMargin: '-15% 0px -70% 0px' });
-    Object.keys(byId).forEach(function (id) { var el = d.getElementById(id); if (el) seen.observe(el); });
+  var terms = Array.prototype.slice.call(d.querySelectorAll('.side-nav .terms a'));
+  var defs = terms.map(function (a) { return d.getElementById(a.hash.slice(1)); });
+  if (terms.length && defs.every(Boolean)) {
+    // The definition being read is the last one whose top has reached the top of the screen.
+    var spy = function () {
+      if (!terms[0].offsetParent) return;
+      var current = 0;
+      defs.forEach(function (el, i) { if (el.getBoundingClientRect().top <= 96) current = i; });
+      terms.forEach(function (a, i) { a.classList.toggle('on', i === current); });
+    };
+    var queued = false;
+    window.addEventListener('scroll', function () {
+      if (queued) return;
+      queued = true;
+      requestAnimationFrame(function () { queued = false; spy(); });
+    }, { passive: true });
+    window.addEventListener('load', spy);
+    spy();
   }
 
   // Copy a citation, share a page.
