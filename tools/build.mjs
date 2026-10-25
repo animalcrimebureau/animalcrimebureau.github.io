@@ -319,6 +319,7 @@ function aboutBody(lang) {
 
 <div class="about-body">
 ${fragment('about', lang)}
+<h2 class="sec" id="app">${L.appHeading}</h2><p class="prose">${L.appText}</p><ul class="plain steps">${L.appSteps.map(x => `<li>${x}</li>`).join('')}</ul><p><button class="install" type="button" hidden>${svg('install')}${L.install}</button></p>
 </div></div></div>`;
 }
 
@@ -376,6 +377,7 @@ function tabBar(pg) {
 let cssVersion = '';
 let jsVersion = '';
 
+const JS_FLAG = "document.documentElement.className+=' js'";
 const SPECULATION = JSON.stringify({
   prerender: [{
     where: { and: [{ href_matches: '/*' }, { not: { href_matches: '/law-xray/*' } }, { not: { href_matches: '/data/*' } }, { not: { selector_matches: '[download]' } }] },
@@ -388,6 +390,21 @@ function preloads(pg) {
   const fonts = pg.lang === 'ar' ? ['plex-arabic-400-arabic', 'plex-arabic-500-arabic', 'public-sans-latin'] : ['public-sans-latin'];
   return pg.cls === 'law' ? fonts.concat('amiri-400-arabic') : fonts;
 }
+
+const sha = s => `'sha256-${createHash('sha256').update(s).digest('base64')}'`;
+const CSP = [
+  "default-src 'self'",
+  `script-src 'self' ${sha(JS_FLAG)} ${sha(SPECULATION)}`,
+  "style-src 'self' 'unsafe-inline'",
+  "img-src 'self'",
+  "font-src 'self'",
+  "connect-src 'self'",
+  "manifest-src 'self'",
+  "worker-src 'self'",
+  "object-src 'none'",
+  "base-uri 'self'",
+  "form-action 'none'",
+].join('; ');
 
 function cardPath(pg) {
   const own = `/assets/share/${pg.lang}/${pg.card.key}.png`;
@@ -404,6 +421,8 @@ function layout(pg) {
   const head = [
     '<meta charset="utf-8">',
     '<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">',
+    `<meta http-equiv="Content-Security-Policy" content="${CSP}">`,
+    '<meta name="format-detection" content="telephone=no">',
     `<title>${esc(pg.title)}</title>`,
     `<meta name="description" content="${esc(pg.description)}">`,
     pg.noindex ? '<meta name="robots" content="noindex">' : '',
@@ -424,7 +443,7 @@ function layout(pg) {
     '<meta name="apple-mobile-web-app-title" content="ACB">',
     ...preloads(pg).map(f => `<link rel="preload" href="/assets/fonts/${f}.woff2" as="font" type="font/woff2" crossorigin>`),
     `<link rel="stylesheet" href="/assets/site.css?v=${cssVersion}">`,
-    "<script>document.documentElement.className+=' js'</script>",
+    `<script>${JS_FLAG}</script>`,
     `<script src="/assets/site.js?v=${jsVersion}" defer></script>`,
     `<script type="speculationrules">${SPECULATION}</script>`,
     pg.headExtra || '',
@@ -443,7 +462,7 @@ function layout(pg) {
 <div class="app">
 <header class="top"><a class="brand" href="${P.home(lang)}"><img src="/assets/img/acb-logo.svg" width="27" height="26" alt="">${brandName(lang)}</a>${langLink('')}</header>
 <header class="side"><a class="brand" href="${P.home(lang)}"><img src="/assets/img/acb-logo.svg" width="27" height="26" alt="">${brandName(lang)}</a>${langLink(' lang-side')}${sideNav(pg)}<div class="side-foot">${install}</div></header>
-<main id="main"${pg.cls ? ` class="${pg.cls}"` : ''}>${pg.body}</main>
+<main id="main"${pg.cls ? ` class="${pg.cls}"` : ''}>${pg.noindex ? '' : `<p class="print-src">${latin(site.name, lang)}${dot(lang)}${latin(url, lang)}</p>`}${pg.body}</main>
 <footer class="foot"><div class="wrap"><p class="foot-brand"${lang === 'ar' ? ' lang="en"' : ''}>${site.name}</p><p>${L.tagline}</p>${contact}<p class="foot-install">${install}</p></div></footer>
 </div>
 ${tabBar(pg)}

@@ -304,12 +304,30 @@ html[dir="rtl"] .rec-no{text-align:right}
 .foot-brand{color:var(--ink);font-weight:500}
 .links{display:flex;flex-wrap:wrap;gap:.25rem 1.5rem}
 .foot-install{margin-top:1rem!important}
+.steps li{padding-inline-start:1rem;border-inline-start:2px solid var(--line)}
+.print-src{display:none}
 
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+}
+
+/* Print: the text alone, edge to edge within the page margins, with the address it came from. */
 @media print{
-  .side,.top,.tabs,.skip,.acts,.toc-m,.back,.install,.chev{display:none!important}
-  body{padding:0}
+  @page{margin:16mm 15mm}
+  .side,.top,.tabs,.skip,.acts,.toc-m,.back,.install,.chev,.foot .links,.foot-install{display:none!important}
+  body{padding:0;font-size:11pt}
   .app{display:block}
   main{padding:0}
+  .wrap,.law .wrap,.wrap-home{max-width:none;margin:0;padding:0}
+  .print-src{display:block;margin:0 0 7mm;font-size:8.5pt;color:var(--ink-2);overflow-wrap:anywhere}
+  a{text-decoration:none}
+  .after a[href^="http"]::after,.pub-page a[href^="http"]::after,.fields a[href^="http"]::after{content:" (" attr(href) ")";font-size:.85em;color:var(--ink-2);overflow-wrap:anywhere}
+  .btn{padding:0;background:none;color:var(--ink);border:0}
+  .btn svg{display:none}
   .js .picker{display:block}
   .pp{display:block!important}
+  .js .pk,.js .pk[aria-expanded="true"]{background:none;border-inline-start-color:transparent;padding-inline:0}
+  .pk-h,.pp,.cl,.nt,.fields > *,.pub,.records li,.corr-list li{break-inside:avoid}
+  h1,h2,h3,.pk-h{break-after:avoid}
+  .foot{border:0;padding:8mm 0 0}
 }

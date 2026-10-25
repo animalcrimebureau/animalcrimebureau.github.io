@@ -23,10 +23,10 @@
         if (b.getAttribute('aria-expanded') === 'true') b.scrollIntoView({ block: 'nearest' });
       });
       b.addEventListener('keydown', function (e) {
-        var step = { ArrowDown: 1, ArrowUp: -1 }[e.key];
-        if (!step) return;
+        var to = { ArrowDown: i + 1, ArrowUp: i - 1, Home: 0, End: buttons.length - 1 }[e.key];
+        if (to === undefined) return;
         e.preventDefault();
-        var next = buttons[(i + step + buttons.length) % buttons.length];
+        var next = buttons[(to + buttons.length) % buttons.length];
         next.focus();
         if (wide()) show(buttons.indexOf(next));
       });

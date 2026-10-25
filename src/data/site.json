@@ -122,7 +122,14 @@
     ],
     "recordCorrections": "Corrections and new information",
     "publicationCorrections": "Corrections",
-    "amended": "Amended {date}"
+    "amended": "Amended {date}",
+    "appHeading": "The app",
+    "appText": "This site can be installed on a phone or a computer as an app. After a first visit, its pages can be read without a connection.",
+    "appSteps": [
+      "On Android, in Chrome: open the menu and choose Install app or Add to Home screen.",
+      "On iPhone and iPad, in Safari: tap Share, then Add to Home Screen.",
+      "On a computer, in Chrome or Edge: choose the install icon in the address bar."
+    ]
   },
   "ar": {
     "langName": "العربية",
@@ -235,6 +242,13 @@
     ],
     "recordCorrections": "التصحيحات والمعلومات الجديدة",
     "publicationCorrections": "التصحيحات",
-    "amended": "عُدّل في {date}"
+    "amended": "عُدّل في {date}",
+    "appHeading": "التطبيق",
+    "appText": "يمكن تثبيت هذا الموقع على الهاتف أو الكمبيوتر كتطبيق. وبعد أول زيارة، يمكن قراءة صفحاته دون اتصال.",
+    "appSteps": [
+      "على أندرويد، في متصفح كروم: من القائمة، اختيار «تثبيت التطبيق» أو «إضافة إلى الشاشة الرئيسية».",
+      "على آيفون وآيباد، في متصفح سفاري: الضغط على «مشاركة»، ثم «إضافة إلى الشاشة الرئيسية».",
+      "على الكمبيوتر، في كروم أو إيدج: اختيار أيقونة التثبيت في شريط العنوان."
+    ]
   }
 }
