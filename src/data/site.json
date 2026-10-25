@@ -3,23 +3,47 @@
   "origin": "https://animalcrimebureau.org",
   "email": "info@animalcrimebureau.org",
   "social": [
-    { "name": "Instagram", "url": "https://www.instagram.com/animalcrimebureau" },
-    { "name": "Substack", "url": "https://animalcrimebureau.substack.com" }
+    {
+      "name": "Instagram",
+      "url": "https://www.instagram.com/animalcrimebureau"
+    },
+    {
+      "name": "Substack",
+      "url": "https://animalcrimebureau.substack.com"
+    }
   ],
   "en": {
     "langName": "English",
     "skip": "Skip to content",
     "siteNav": "Site",
     "backTo": "Back to",
-    "nav": { "home": "Home", "law": "Law", "register": "Case Register", "publications": "Publications", "about": "About" },
-    "tabs": { "home": "Home", "law": "Law", "register": "Register", "publications": "Publications", "about": "About" },
+    "nav": {
+      "home": "Home",
+      "law": "Law",
+      "register": "Case Register",
+      "publications": "Publications",
+      "about": "About"
+    },
+    "tabs": {
+      "home": "Home",
+      "law": "Law",
+      "register": "Register",
+      "publications": "Publications",
+      "about": "About"
+    },
     "description": "Animal Crime Bureau documents crimes against animals and measures how the law is applied against the standard the law itself names.",
     "thesis": "Laws that protect animals are on the books. How far they are applied is rarely measured.",
     "tagline": "Investigating animal crime across Egypt and the MENA region.",
     "ledgerHeading": "Egyptian law, by animal",
     "ledgerSub": "Each category of animal falls under a different law, which punishes a different act with a different penalty.",
     "ledgerNote": "As written in the law. October 2026.",
-    "ledgerFields": { "penalty": "Penalty", "act": "Act", "provision": "Provision", "register": "Case Register", "site": "On this site" },
+    "ledgerFields": {
+      "penalty": "Penalty",
+      "act": "Act",
+      "provision": "Provision",
+      "register": "Case Register",
+      "site": "On this site"
+    },
     "noRecords": "None published",
     "annotatedLink": "{article} of this law, with Animal Crime Bureau’s measurement",
     "latestPublication": "Latest publication",
@@ -39,9 +63,29 @@
     "registerDescription": "This register gives each incident that Animal Crime Bureau documents or verifies a fixed number and one standard format, so that it can be cited and counted.",
     "dataHeading": "Data",
     "dataText": "The published records, in English and Arabic, in one file:",
-    "fields": { "month": "Month", "governorate": "Governorate", "animals": "Animals", "documented": "Documented", "provision": "Provision", "evidence": "Evidence", "sources": "Sources", "related": "Related", "published": "Published" },
-    "grades": ["Direct observation", "Corroborated", "Single source", "Contested"],
-    "gradesLower": ["direct observation", "corroborated", "single source", "contested"],
+    "fields": {
+      "month": "Month",
+      "governorate": "Governorate",
+      "animals": "Animals",
+      "documented": "Documented",
+      "provision": "Provision",
+      "evidence": "Evidence",
+      "sources": "Sources",
+      "related": "Related",
+      "published": "Published"
+    },
+    "grades": [
+      "Direct observation",
+      "Corroborated",
+      "Single source",
+      "Contested"
+    ],
+    "gradesLower": [
+      "direct observation",
+      "corroborated",
+      "single source",
+      "contested"
+    ],
     "evidenceLine": "Evidence {n}, {label}",
     "gradeOfRecord": " (grade of this record)",
     "citeRecord": "Cite this record",
@@ -61,22 +105,57 @@
     "install": "Install the app",
     "offlineHeading": "No connection",
     "offlineText": "This page is not saved on this device yet. Pages you have opened before can be read without a connection.",
-    "home": "Home"
+    "home": "Home",
+    "months": [
+      "January",
+      "February",
+      "March",
+      "April",
+      "May",
+      "June",
+      "July",
+      "August",
+      "September",
+      "October",
+      "November",
+      "December"
+    ],
+    "recordCorrections": "Corrections and new information",
+    "publicationCorrections": "Corrections",
+    "amended": "Amended {date}"
   },
   "ar": {
     "langName": "العربية",
     "skip": "انتقل إلى المحتوى",
     "siteNav": "الموقع",
     "backTo": "العودة إلى",
-    "nav": { "home": "الرئيسية", "law": "القانون", "register": "سجل الحالات", "publications": "الإصدارات", "about": "من نحن" },
-    "tabs": { "home": "الرئيسية", "law": "القانون", "register": "السجل", "publications": "الإصدارات", "about": "من نحن" },
+    "nav": {
+      "home": "الرئيسية",
+      "law": "القانون",
+      "register": "سجل الحالات",
+      "publications": "الإصدارات",
+      "about": "من نحن"
+    },
+    "tabs": {
+      "home": "الرئيسية",
+      "law": "القانون",
+      "register": "السجل",
+      "publications": "الإصدارات",
+      "about": "من نحن"
+    },
     "description": "Animal Crime Bureau جهة مستقلة للتحقيق القانوني، توثّق الجرائم الواقعة على الحيوانات وتقيس تطبيق القانون بالمعيار الذي يحيل إليه القانون نفسه.",
     "thesis": "القوانين التي تحمي الحيوانات موجودة في النصوص. أما مدى تطبيقها، فنادرًا ما يُقاس.",
     "tagline": "التحقيق في الجرائم الواقعة على الحيوانات في مصر والإقليم.",
     "ledgerHeading": "القانون المصري، حسب الحيوان",
     "ledgerSub": "تخضع كل فئة من الحيوانات لقانون مختلف، يعاقب على فعل مختلف بعقوبة مختلفة.",
     "ledgerNote": "كما وردت في نص القانون. أكتوبر ٢٠٢٦.",
-    "ledgerFields": { "penalty": "العقوبة", "act": "الفعل", "provision": "النص", "register": "سجل الحالات", "site": "على هذا الموقع" },
+    "ledgerFields": {
+      "penalty": "العقوبة",
+      "act": "الفعل",
+      "provision": "النص",
+      "register": "سجل الحالات",
+      "site": "على هذا الموقع"
+    },
     "noRecords": "لا توجد سجلات منشورة",
     "annotatedLink": "{article} من هذا القانون، مع قياس <bdi lang=\"en\">Animal Crime Bureau</bdi>",
     "latestPublication": "أحدث إصدار",
@@ -96,9 +175,29 @@
     "registerDescription": "يمنح هذا السجل كل واقعة توثّقها Animal Crime Bureau أو تتحقق منها رقمًا ثابتًا وصيغة موحّدة، حتى يمكن الاستشهاد بها وإحصاؤها.",
     "dataHeading": "البيانات",
     "dataText": "السجلات المنشورة بالعربية والإنجليزية في ملف واحد:",
-    "fields": { "month": "الشهر", "governorate": "المحافظة", "animals": "الحيوانات", "documented": "ما تم توثيقه", "provision": "النص المنطبق", "evidence": "الدليل", "sources": "المصادر", "related": "ذات صلة", "published": "تاريخ النشر" },
-    "grades": ["مشاهدة مباشرة", "مصادر متعددة", "مصدر واحد", "روايات متعارضة"],
-    "gradesLower": ["مشاهدة مباشرة", "مصادر متعددة", "مصدر واحد", "روايات متعارضة"],
+    "fields": {
+      "month": "الشهر",
+      "governorate": "المحافظة",
+      "animals": "الحيوانات",
+      "documented": "ما تم توثيقه",
+      "provision": "النص المنطبق",
+      "evidence": "الدليل",
+      "sources": "المصادر",
+      "related": "ذات صلة",
+      "published": "تاريخ النشر"
+    },
+    "grades": [
+      "مشاهدة مباشرة",
+      "مصادر متعددة",
+      "مصدر واحد",
+      "روايات متعارضة"
+    ],
+    "gradesLower": [
+      "مشاهدة مباشرة",
+      "مصادر متعددة",
+      "مصدر واحد",
+      "روايات متعارضة"
+    ],
     "evidenceLine": "الدليل {n}، {label}",
     "gradeOfRecord": " (درجة هذا السجل)",
     "citeRecord": "للاستشهاد بهذا السجل",
@@ -119,6 +218,23 @@
     "install": "تثبيت التطبيق",
     "offlineHeading": "لا يوجد اتصال",
     "offlineText": "هذه الصفحة غير محفوظة على هذا الجهاز بعد. الصفحات التي فتحتها من قبل يمكن قراءتها دون اتصال.",
-    "home": "الرئيسية"
+    "home": "الرئيسية",
+    "months": [
+      "يناير",
+      "فبراير",
+      "مارس",
+      "أبريل",
+      "مايو",
+      "يونيو",
+      "يوليو",
+      "أغسطس",
+      "سبتمبر",
+      "أكتوبر",
+      "نوفمبر",
+      "ديسمبر"
+    ],
+    "recordCorrections": "التصحيحات والمعلومات الجديدة",
+    "publicationCorrections": "التصحيحات",
+    "amended": "عُدّل في {date}"
   }
 }

@@ -35,6 +35,12 @@ const AR_DIGITS = '٠١٢٣٤٥٦٧٨٩';
 const num = (n, lang) => (lang === 'ar' ? String(n).replace(/\d/g, d => AR_DIGITS[d]) : String(n));
 // Latin text inside an Arabic page keeps its own direction.
 const latin = (html, lang) => (lang === 'ar' ? `<bdi lang="en">${html}</bdi>` : html);
+// 2026-11 reads November 2026, 2026-11-03 reads 3 November 2026, in either language.
+const formatDate = (iso, lang) => {
+  const [y, m, day] = iso.split('-');
+  const text = `${day ? `${Number(day)} ` : ''}${site[lang].months[Number(m) - 1]} ${y}`;
+  return num(text, lang);
+};
 const ref = (r, lang, cls = 'ref') => (lang === 'ar' ? `<bdi class="${cls}" lang="en">${r}</bdi>` : `<span class="${cls}">${r}</span>`);
 const brandName = lang => (lang === 'ar' ? `<span lang="en">${site.name}</span>` : `<span>${site.name}</span>`);
 const fragment = (name, lang) => read(`src/fragments/${name}.${lang}.html`).trim();
@@ -97,6 +103,17 @@ function actions(id, lang) {
 
 function citeBlock(heading, citation, lang) {
   return `<section class="cite-sec" aria-labelledby="cite-h"><h2 class="sec" id="cite-h">${heading}</h2><p class="cite" id="cite">${citation}</p>${actions('cite', lang)}</section>`;
+}
+
+// Corrections and new information, dated, on the record or publication they amend.
+function amendments(list, heading, lang) {
+  if (!list || !list.length) return { note: '', block: '' };
+  const L = site[lang];
+  const last = list[list.length - 1].date;
+  return {
+    note: `<p class="amended"><a href="#corr-h">${fill(L.amended, { date: formatDate(last, lang) })}</a></p>`,
+    block: `<section class="corr" aria-labelledby="corr-h"><h2 class="sec" id="corr-h">${heading}</h2><ol class="corr-list">${list.map(c => `<li><time datetime="${c.date}">${formatDate(c.date, lang)}</time><p>${c[lang]}</p></li>`).join('')}</ol></section>`,
+  };
 }
 
 function evidenceBars(grade) {
@@ -244,6 +261,7 @@ function recordBody(r, lang) {
     const p = pubBySlug[slug];
     return `<a href="${P.publication(lang, p)}">${p[lang].series}</a>${lang === 'ar' ? ` (${L.inEnglish})` : ''}`;
   }).join('<br>');
+  const fix = amendments(r.corrections, L.recordCorrections, lang);
   const url = ORIGIN + P.record(lang, r);
   const citation = fill(L.recordCitation, { ref: lang === 'ar' ? ref(r.id, lang) : r.id, published: t.published, url: latin(url, lang) });
   const i = records.indexOf(r);
@@ -254,7 +272,7 @@ function recordBody(r, lang) {
     : '';
   return `<div class="wrap">
 ${back(P.register(lang), L.registerHeading)}
-<article class="rec" aria-labelledby="h-rec"><h1 class="code" id="h-rec">${lang === 'ar' ? ref(r.id, lang) : r.id}</h1><p>${t.text}</p><dl class="fields"><dt>${F.month}</dt><dd>${t.month}</dd><dt>${F.governorate}</dt><dd>${t.governorate}</dd><dt>${F.animals}</dt><dd>${t.animals}</dd><dt>${F.documented}</dt><dd>${t.documented}</dd><dt>${F.provision}</dt><dd>${prov[lang]}${lang === 'en' ? `<span class="ar-line" lang="ar" dir="rtl">${prov.ar}</span>` : ''}</dd><dt>${F.evidence}</dt><dd><ol class="scale">${scale}</ol></dd><dt>${F.sources}</dt><dd>${t.sources}</dd>${related ? `<dt>${F.related}</dt><dd>${related}</dd>` : ''}<dt>${F.published}</dt><dd>${t.published}</dd></dl></article>
+<article class="rec" aria-labelledby="h-rec"><h1 class="code" id="h-rec">${lang === 'ar' ? ref(r.id, lang) : r.id}</h1>${fix.note}<p>${t.text}</p><dl class="fields"><dt>${F.month}</dt><dd>${t.month}</dd><dt>${F.governorate}</dt><dd>${t.governorate}</dd><dt>${F.animals}</dt><dd>${t.animals}</dd><dt>${F.documented}</dt><dd>${t.documented}</dd><dt>${F.provision}</dt><dd>${prov[lang]}${lang === 'en' ? `<span class="ar-line" lang="ar" dir="rtl">${prov.ar}</span>` : ''}</dd><dt>${F.evidence}</dt><dd><ol class="scale">${scale}</ol></dd><dt>${F.sources}</dt><dd>${t.sources}</dd>${related ? `<dt>${F.related}</dt><dd>${related}</dd>` : ''}<dt>${F.published}</dt><dd>${t.published}</dd></dl>${fix.block}</article>
 ${citeBlock(L.citeRecord, citation, lang)}
 ${pn}
 </div>`;
@@ -278,16 +296,17 @@ function publicationBody(p, lang) {
     const r = recordById[x.record];
     return `<li><a href="${P.record(lang, r)}">${fill(L.relatedRecord, { ref: ref(r.id, lang) })}</a></li>`;
   }).join('');
+  const fix = amendments(p.corrections, L.publicationCorrections, lang);
   const full = `${p.title}: ${p.subtitle}`;
   const citation = lang === 'ar'
     ? `${latin(site.name, lang)}، ${latin(full, lang)}، ${t.series}، ${ref(p.ref, lang)}، ${t.date} (${L.inEnglish}). ${latin(p.url, lang)}`
     : `${site.name}, ${full}, ${t.series}, ${ref(p.ref, lang)}, ${t.date}. ${p.url}`;
   return `<div class="wrap">
 ${back(P.publications(lang), L.publicationsHeading)}
-<article class="pub-page" aria-labelledby="h-pub"><p class="series">${seriesLine(p, lang)}</p><h1 class="pub-h" id="h-pub">${latin(p.title, lang)}</h1><p class="pub-lead">${latin(p.subtitle, lang)}</p>
+<article class="pub-page" aria-labelledby="h-pub"><p class="series">${seriesLine(p, lang)}</p><h1 class="pub-h" id="h-pub">${latin(p.title, lang)}</h1><p class="pub-lead">${latin(p.subtitle, lang)}</p>${fix.note}
 <p class="pub-cta"><a class="btn" href="${p.url}" hreflang="${p.language}">${L.readFull}${lang === 'ar' ? ` <span class="btn-note">(${L.inEnglish})</span>` : ''}${svg('ext', 'ext')}</a></p>
 ${pubExtra(p, lang)}
-${rel ? `<h2 class="sec">${L.onSite}</h2><ul class="plain rel">${rel}</ul>` : ''}</article>
+${rel ? `<h2 class="sec">${L.onSite}</h2><ul class="plain rel">${rel}</ul>` : ''}${fix.block}</article>
 ${citeBlock(L.citePublication, citation, lang)}
 </div>`;
 }
@@ -364,6 +383,12 @@ const SPECULATION = JSON.stringify({
   }],
 });
 
+// The fonts a page shows before the reader scrolls, fetched with the stylesheet.
+function preloads(pg) {
+  const fonts = pg.lang === 'ar' ? ['plex-arabic-400-arabic', 'plex-arabic-500-arabic', 'public-sans-latin'] : ['public-sans-latin'];
+  return pg.cls === 'law' ? fonts.concat('amiri-400-arabic') : fonts;
+}
+
 function cardPath(pg) {
   const own = `/assets/share/${pg.lang}/${pg.card.key}.png`;
   return existsSync(join(ROOT, own)) ? own : null;
@@ -397,7 +422,7 @@ function layout(pg) {
     '<link rel="icon" type="image/svg+xml" href="/assets/img/favicon.svg">',
     '<link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png">',
     '<meta name="apple-mobile-web-app-title" content="ACB">',
-    `<link rel="preload" href="/assets/fonts/${lang === 'ar' ? 'plex-arabic-400-arabic' : 'public-sans-latin'}.woff2" as="font" type="font/woff2" crossorigin>`,
+    ...preloads(pg).map(f => `<link rel="preload" href="/assets/fonts/${f}.woff2" as="font" type="font/woff2" crossorigin>`),
     `<link rel="stylesheet" href="/assets/site.css?v=${cssVersion}">`,
     "<script>document.documentElement.className+=' js'</script>",
     `<script src="/assets/site.js?v=${jsVersion}" defer></script>`,
@@ -413,10 +438,11 @@ function layout(pg) {
   const contact = `<p><a href="mailto:${site.email}"${lang === 'ar' ? ' lang="en"' : ''}>${site.email}</a></p><p class="links">${site.social.map(s => `<a href="${s.url}"${lang === 'ar' ? ' lang="en"' : ''}>${s.name}</a>`).join('')}</p>`;
 
   return `<!doctype html>
+<!-- Generated by tools/build.mjs from src/. Edit the source and build again; changes made here are lost. -->
 <html lang="${lang}"${lang === 'ar' ? ' dir="rtl"' : ''}><head>${head}</head><body><a class="skip" href="#main">${L.skip}</a>
 <div class="app">
 <header class="top"><a class="brand" href="${P.home(lang)}"><img src="/assets/img/acb-logo.svg" width="27" height="26" alt="">${brandName(lang)}</a>${langLink('')}</header>
-<header class="side"><a class="brand" href="${P.home(lang)}"><img src="/assets/img/acb-logo.svg" width="27" height="26" alt="">${brandName(lang)}</a>${sideNav(pg)}<div class="side-foot">${langLink(' lang-side')}${install}</div></header>
+<header class="side"><a class="brand" href="${P.home(lang)}"><img src="/assets/img/acb-logo.svg" width="27" height="26" alt="">${brandName(lang)}</a>${langLink(' lang-side')}${sideNav(pg)}<div class="side-foot">${install}</div></header>
 <main id="main"${pg.cls ? ` class="${pg.cls}"` : ''}>${pg.body}</main>
 <footer class="foot"><div class="wrap"><p class="foot-brand"${lang === 'ar' ? ' lang="en"' : ''}>${site.name}</p><p>${L.tagline}</p>${contact}<p class="foot-install">${install}</p></div></footer>
 </div>
@@ -447,7 +473,58 @@ function crumbs(lang, trail) {
 
 // ------------------------------------------------------------------- pages
 
+// Stops the build with a plain list of what is wrong in the sources, instead of
+// publishing a page with a gap or an "undefined" in it.
+function validate() {
+  const errors = [];
+  const need = (ok, message) => { if (!ok) errors.push(message); };
+  const isDate = s => typeof s === 'string' && /^\d{4}-(0[1-9]|1[0-2])(-(0[1-9]|[12]\d|3[01]))?$/.test(s);
+  const both = (item, keys, where) => {
+    for (const lang of LANGS) for (const k of keys) need(typeof item[lang]?.[k] === 'string' && item[lang][k].trim(), `${where}: "${lang}.${k}" is missing`);
+  };
+  const dated = (list, where) => {
+    for (const c of list || []) {
+      need(isDate(c.date), `${where}: correction date "${c.date}" should look like 2026-11 or 2026-11-03`);
+      need(c.en?.trim() && c.ar?.trim(), `${where}: correction of ${c.date} needs its text in English and Arabic`);
+    }
+  };
+  const ids = new Set();
+  for (const r of records) {
+    const where = `register.json, ${r.id || 'a record without an id'}`;
+    need(/^ACB\/\d{4}\/\d{3}$/.test(r.id), `${where}: the id should look like ACB/2026/001`);
+    need(!ids.has(r.id), `${where}: this id is used twice`);
+    ids.add(r.id);
+    need([1, 2, 3, 4].includes(r.grade), `${where}: grade should be 1, 2, 3 or 4`);
+    need(provisions[r.provision], `${where}: provision "${r.provision}" is not in provisions.json`);
+    need(isDate(r.month) && isDate(r.published), `${where}: "month" and "published" should look like 2026-07`);
+    both(r, ['summary', 'text', 'month', 'governorate', 'animals', 'documented', 'sources', 'published'], where);
+    for (const s of r.related || []) need(pubBySlug[s], `${where}: related publication "${s}" is not in publications.json`);
+    dated(r.corrections, where);
+  }
+  const slugs = new Set();
+  for (const p of publications) {
+    const where = `publications.json, ${p.ref || p.slug || 'a publication without a reference'}`;
+    need(/^[a-z0-9-]+$/.test(p.slug || ''), `${where}: the slug should be lowercase words joined by hyphens`);
+    need(!slugs.has(p.slug), `${where}: this slug is used twice`);
+    slugs.add(p.slug);
+    for (const k of ['ref', 'title', 'subtitle', 'url', 'language']) need(p[k]?.trim(), `${where}: "${k}" is missing`);
+    need(isDate(p.date), `${where}: "date" should look like 2026-10`);
+    both(p, ['series', 'date'], where);
+    for (const x of p.related || []) need(x.law ? articleByKey[x.law] : recordById[x.record], `${where}: related ${x.law ? `article "${x.law}"` : `record "${x.record}"`} does not exist`);
+    dated(p.corrections, where);
+  }
+  for (const it of ledger) {
+    const where = `ledger.json, ${it.en?.category || 'an entry'}`;
+    need(provisions[it.provision], `${where}: provision "${it.provision}" is not in provisions.json`);
+    need(!it.annotated || articleByKey[it.annotated], `${where}: annotated article "${it.annotated}" does not exist`);
+    both(it, ['category', 'act', 'penalty'], where);
+  }
+  for (const [key, prov] of Object.entries(provisions)) need(prov.en?.trim() && prov.ar?.trim(), `provisions.json, ${key}: needs English and Arabic`);
+  if (errors.length) throw new Error(`The sources need fixing before the site can be built:\n- ${errors.join('\n- ')}`);
+}
+
 export function pages() {
+  validate();
   const out = [];
   for (const lang of LANGS) {
     const L = site[lang];
@@ -597,17 +674,19 @@ function registerData() {
     sources: { en: r.en.sources, ar: r.ar.sources },
     description: { en: strip(r.en.text), ar: strip(r.ar.text) },
     related: (r.related || []).map(s => ({ reference: pubBySlug[s].ref, title: pubBySlug[s].title, url: ORIGIN + P.publication('en', pubBySlug[s]) })),
+    corrections: (r.corrections || []).map(c => ({ date: c.date, en: strip(c.en), ar: strip(c.ar) })),
     url: { en: ORIGIN + P.record('en', r), ar: ORIGIN + P.record('ar', r) },
   }));
   const updated = records.map(r => r.published).sort().pop();
   const json = JSON.stringify({ name: 'Case Register', publisher: site.name, url: ORIGIN + P.register('en'), updated, records: rows }, null, 2) + '\n';
-  const cols = ['reference', 'month', 'published', 'governorate_en', 'governorate_ar', 'animals_en', 'animals_ar', 'documented_en', 'documented_ar', 'provision_en', 'provision_ar', 'evidence_grade', 'evidence_en', 'evidence_ar', 'sources_en', 'sources_ar', 'description_en', 'description_ar', 'related', 'url_en', 'url_ar'];
+  const cols = ['reference', 'month', 'published', 'governorate_en', 'governorate_ar', 'animals_en', 'animals_ar', 'documented_en', 'documented_ar', 'provision_en', 'provision_ar', 'evidence_grade', 'evidence_en', 'evidence_ar', 'sources_en', 'sources_ar', 'description_en', 'description_ar', 'related', 'corrections_en', 'corrections_ar', 'url_en', 'url_ar'];
   const flat = rows.map(x => ({
     reference: x.reference, month: x.month, published: x.published,
     governorate_en: x.governorate.en, governorate_ar: x.governorate.ar, animals_en: x.animals.en, animals_ar: x.animals.ar,
     documented_en: x.documented.en, documented_ar: x.documented.ar, provision_en: x.provision.en, provision_ar: x.provision.ar,
     evidence_grade: x.evidence_grade, evidence_en: x.evidence.en, evidence_ar: x.evidence.ar, sources_en: x.sources.en, sources_ar: x.sources.ar,
     description_en: x.description.en, description_ar: x.description.ar, related: x.related.map(y => y.reference).join('; '),
+    corrections_en: x.corrections.map(c => `${c.date}: ${c.en}`).join(' | '), corrections_ar: x.corrections.map(c => `${c.date}: ${c.ar}`).join(' | '),
     url_en: x.url.en, url_ar: x.url.ar,
   }));
   // A byte order mark lets spreadsheet programs read the Arabic columns as UTF-8.
@@ -635,13 +714,14 @@ function manifest(lang) {
   }, null, 2) + '\n';
 }
 
-const FONTS = ['public-sans-latin', 'public-sans-latin-ext', 'plex-arabic-400-arabic', 'plex-arabic-500-arabic', 'amiri-400-arabic', 'amiri-400-latin', 'amiri-700-arabic', 'amiri-700-latin'];
+// Saved with the pages when the app installs. The other weights and scripts are saved the first time a page uses them.
+const CORE_FONTS = ['public-sans-latin', 'plex-arabic-400-arabic', 'plex-arabic-500-arabic', 'amiri-400-arabic'];
 
 function serviceWorker(all) {
   const assets = [
     `/assets/site.css?v=${cssVersion}`, `/assets/site.js?v=${jsVersion}`,
     '/assets/img/acb-logo.svg', '/assets/img/favicon.svg', '/assets/img/icon-192.png',
-    ...FONTS.filter(f => !f.endsWith('latin-ext')).map(f => `/assets/fonts/${f}.woff2`),
+    ...CORE_FONTS.map(f => `/assets/fonts/${f}.woff2`),
   ];
   const pagesList = all.filter(p => p.path !== '/404.html').map(p => p.path);
   const version = hash([read('assets/site.css'), read('assets/site.js'), ...all.map(p => p.html)].join('\n'));
@@ -686,4 +766,11 @@ export function build() {
   return all;
 }
 
-if (import.meta.url === pathToFileURL(process.argv[1]).href) build();
+if (import.meta.url === pathToFileURL(process.argv[1]).href) {
+  try {
+    build();
+  } catch (e) {
+    console.error(e.message);
+    process.exit(1);
+  }
+}

@@ -2,10 +2,10 @@
 // Pages are fetched from the network first, so corrections reach readers at
 // once, and fall back to the saved copy without a connection. Every page of
 // the site is saved when the worker installs.
-const VERSION = '6bba5a1461';
+const VERSION = 'd16238fd4d';
 const CACHE = 'acb-' + VERSION;
 const PAGES = ["/","/law/","/law/29-2023/1/","/register/","/register/ACB-2026-001/","/publications/","/publications/working-paper-2/","/publications/method-1/","/publications/investigation-report-1/","/publications/working-paper-1/","/about/","/ar/","/ar/law/","/ar/law/29-2023/1/","/ar/register/","/ar/register/ACB-2026-001/","/ar/publications/","/ar/publications/working-paper-2/","/ar/publications/method-1/","/ar/publications/investigation-report-1/","/ar/publications/working-paper-1/","/ar/about/","/offline.html"];
-const ASSETS = ["/assets/site.css?v=c55e8b0530","/assets/site.js?v=5716f29375","/assets/img/acb-logo.svg","/assets/img/favicon.svg","/assets/img/icon-192.png","/assets/fonts/public-sans-latin.woff2","/assets/fonts/plex-arabic-400-arabic.woff2","/assets/fonts/plex-arabic-500-arabic.woff2","/assets/fonts/amiri-400-arabic.woff2","/assets/fonts/amiri-400-latin.woff2","/assets/fonts/amiri-700-arabic.woff2","/assets/fonts/amiri-700-latin.woff2"];
+const ASSETS = ["/assets/site.css?v=c2a6465fa1","/assets/site.js?v=cab2cbad06","/assets/img/acb-logo.svg","/assets/img/favicon.svg","/assets/img/icon-192.png","/assets/fonts/public-sans-latin.woff2","/assets/fonts/plex-arabic-400-arabic.woff2","/assets/fonts/plex-arabic-500-arabic.woff2","/assets/fonts/amiri-400-arabic.woff2"];
 // Only this site's own sections; other projects on the domain, such as /law-xray/, are left alone.
 const SECTIONS = new Set(['', 'ar', 'law', 'register', 'publications', 'about', 'offline.html']);
 const WAIT = 3000;

@@ -3,7 +3,7 @@
   var d = document;
 
   // Home ledger: choose a category on the side and its law shows beside it.
-  // On a narrow screen the same list opens one category at a time.
+  // On a narrow screen the same list starts closed and opens one category at a time.
   d.querySelectorAll('[data-picker]').forEach(function (root) {
     var buttons = Array.prototype.slice.call(root.querySelectorAll('.pk'));
     function wide() { return getComputedStyle(root).gridTemplateColumns.split(' ').length > 1; }
@@ -16,7 +16,12 @@
       });
     }
     buttons.forEach(function (b, i) {
-      b.addEventListener('click', function () { show(i, !wide()); });
+      b.addEventListener('click', function () {
+        if (wide()) { show(i); return; }
+        show(i, true);
+        // Closing the category above moves this one up; keep it on screen.
+        if (b.getAttribute('aria-expanded') === 'true') b.scrollIntoView({ block: 'nearest' });
+      });
       b.addEventListener('keydown', function (e) {
         var step = { ArrowDown: 1, ArrowUp: -1 }[e.key];
         if (!step) return;
@@ -26,7 +31,8 @@
         if (wide()) show(buttons.indexOf(next));
       });
     });
-    show(0);
+    show(wide() ? 0 : -1);
+    root.setAttribute('data-ready', '');
     window.addEventListener('resize', function () {
       if (wide() && !buttons.some(function (b) { return b.getAttribute('aria-expanded') === 'true'; })) show(0);
     });
