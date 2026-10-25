@@ -1,0 +1,30 @@
+# On every pull request and every push to main: the committed pages must be
+# what the sources build, and every link, anchor, preview and app file must resolve.
+name: Check the site
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: The committed pages match their sources
+        run: |
+          node tools/build.mjs
+          if [ -n "$(git status --porcelain)" ]; then
+            git status --porcelain
+            echo "The pages above differ from what src/ builds. Run node tools/build.mjs and commit the result."
+            exit 1
+          fi
+      - name: Links, anchors, headings, previews and app files
+        run: node tools/check.mjs
