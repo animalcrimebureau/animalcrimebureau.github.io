@@ -1,0 +1,54 @@
+{
+  "name": "Case Register",
+  "publisher": "Animal Crime Bureau",
+  "url": "https://animalcrimebureau.org/register/",
+  "updated": "2026-10",
+  "records": [
+    {
+      "reference": "ACB/2026/001",
+      "month": "2026-07",
+      "published": "2026-10",
+      "governorate": {
+        "en": "Damietta",
+        "ar": "دمياط"
+      },
+      "animals": {
+        "en": "Dogs",
+        "ar": "كلاب"
+      },
+      "documented": {
+        "en": "Killed by poisoning",
+        "ar": "القتل بالسم"
+      },
+      "provision": {
+        "en": "Penal Code, Article 357",
+        "ar": "قانون العقوبات، المادة ٣٥٧"
+      },
+      "evidence_grade": 2,
+      "evidence": {
+        "en": "Corroborated",
+        "ar": "مصادر متعددة"
+      },
+      "sources": {
+        "en": "Social media posts, including a local news page",
+        "ar": "منشورات على وسائل التواصل الاجتماعي، منها صفحة إخبارية محلية"
+      },
+      "description": {
+        "en": "Several independent sources reported dogs killed by poisoning in Damietta Governorate in July 2026. Animal Crime Bureau verified the place and the month.",
+        "ar": "أفادت عدة مصادر مستقلة بقتل كلاب بالسم في محافظة دمياط في يوليو ٢٠٢٦. وتحققت Animal Crime Bureau من المكان والشهر."
+      },
+      "related": [
+        {
+          "reference": "ACB/2026/001",
+          "title": "“Within the State’s Available Capacities”",
+          "url": "https://animalcrimebureau.org/publications/investigation-report-1/"
+        }
+      ],
+      "corrections": [],
+      "url": {
+        "en": "https://animalcrimebureau.org/register/ACB-2026-001/",
+        "ar": "https://animalcrimebureau.org/ar/register/ACB-2026-001/"
+      }
+    }
+  ]
+}

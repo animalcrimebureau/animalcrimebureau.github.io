@@ -1,0 +1,85 @@
+[
+  {
+    "slug": "working-paper-2",
+    "ref": "ACB/WP/002",
+    "date": "2026-10",
+    "language": "en",
+    "url": "https://animalcrimebureau.substack.com/p/even-if-it-knows-the-way-back",
+    "title": "“Even If It Knows the Way Back”",
+    "subtitle": "How the Dangerous Animal Traveled Through Arab Law",
+    "en": {
+      "series": "Working Paper No. 2",
+      "date": "October 2026"
+    },
+    "ar": {
+      "series": "ورقة العمل رقم ٢",
+      "date": "أكتوبر ٢٠٢٦"
+    },
+    "tool": {
+      "name": "Law X-ray",
+      "url": "https://animalcrimebureau.org/law-xray/"
+    },
+    "related": [
+      {
+        "law": "29-2023/1"
+      }
+    ]
+  },
+  {
+    "slug": "method-1",
+    "ref": "ACB/MET/001",
+    "date": "2026-09",
+    "language": "en",
+    "url": "https://animalcrimebureau.substack.com/p/the-incorporation-audit",
+    "title": "The Incorporation Audit",
+    "subtitle": "A Method for Measuring a State Against the External Standard Its Own Legislation Names",
+    "en": {
+      "series": "Method No. 1",
+      "date": "September 2026"
+    },
+    "ar": {
+      "series": "منهج رقم ١",
+      "date": "سبتمبر ٢٠٢٦"
+    },
+    "version": "1.0"
+  },
+  {
+    "slug": "investigation-report-1",
+    "ref": "ACB/2026/001",
+    "date": "2026-09",
+    "language": "en",
+    "url": "https://animalcrimebureau.substack.com/p/within-the-states-available-capacities",
+    "title": "“Within the State’s Available Capacities”",
+    "subtitle": "Egypt’s Framework for Street Animals Measured Against the Standard Its Own Law Names",
+    "en": {
+      "series": "Investigation Report No. 1",
+      "date": "September 2026"
+    },
+    "ar": {
+      "series": "تقرير التحقيق رقم ١",
+      "date": "سبتمبر ٢٠٢٦"
+    },
+    "related": [
+      {
+        "record": "ACB/2026/001"
+      }
+    ]
+  },
+  {
+    "slug": "working-paper-1",
+    "ref": "ACB/WP/001",
+    "date": "2026-06",
+    "language": "en",
+    "url": "https://animalcrimebureau.substack.com/p/no-category-is-neutral-on-twails",
+    "title": "No Category Is Neutral",
+    "subtitle": "On TWAIL’s Unexamined Boundary",
+    "en": {
+      "series": "Working Paper No. 1",
+      "date": "June 2026"
+    },
+    "ar": {
+      "series": "ورقة العمل رقم ١",
+      "date": "يونيو ٢٠٢٦"
+    }
+  }
+]

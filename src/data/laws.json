@@ -1,0 +1,38 @@
+[
+  {
+    "country": "eg",
+    "id": "29-2023",
+    "title_ar": "قانون تنظيم حيازة الحيوانات الخطرة والكلاب",
+    "gazette_date": "2023-05-29",
+    "en": {
+      "country": "Egypt",
+      "title": "Law Regulating the Possession of Dangerous Animals and Dogs",
+      "gazette": "Promulgated by Law No. 29 of 2023. Official Gazette No. 21 bis (a), 29 May 2023.",
+      "number": "Law No. 29 of 2023"
+    },
+    "ar": {
+      "country": "مصر",
+      "title": "قانون تنظيم حيازة الحيوانات الخطرة والكلاب",
+      "gazette": "الصادر بالقانون رقم ٢٩ لسنة ٢٠٢٣. الجريدة الرسمية، العدد ٢١ مكرر (أ)، ٢٩ مايو ٢٠٢٣.",
+      "number": "القانون رقم ٢٩ لسنة ٢٠٢٣"
+    },
+    "articles": [
+      {
+        "n": "1",
+        "fragment": "law-29-2023-1",
+        "en": {
+          "article": "Article 1",
+          "heading": "Definitions"
+        },
+        "ar": {
+          "article": "المادة ١",
+          "heading": "التعريفات"
+        }
+      }
+    ],
+    "tool": {
+      "name": "Law X-ray",
+      "url": "https://animalcrimebureau.org/law-xray/"
+    }
+  }
+]
