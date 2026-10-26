@@ -8,6 +8,22 @@ published, its photographs, or any other file of an open case must never be
 committed here, not even for a moment: deleting it later does not take it out of
 the history.
 
+## Rules for every change
+
+- Change the sources in `src/`, then build and check them as below. Never edit a
+  generated page by hand.
+- After changing `assets/site.js`, `assets/site.css` or the page layout, also run
+  the browser test.
+- Add no fact, figure, date or legal reading that Animal Crime Bureau has not
+  published or approved, and change the wording of a legal text only with its
+  approval.
+- Never change a published text silently: a correction goes in `corrections`,
+  dated, in both languages.
+- Keep the two languages in step: every change to an English page has its
+  Arabic counterpart.
+- In Arabic text, separate items with the Arabic comma, not a middle dot: next
+  to Arabic digits a dot reads as zero.
+
 ## Changing the content
 
 Edit the sources in `src/`, never the generated HTML: the next build overwrites it.
@@ -65,7 +81,7 @@ its `slug` (the address, such as `working-paper-3`), `ref`, `date` (`2026-12`),
 under `en` and `ar`. `tool`, `version` and `related` are optional.
 
 **Draw a fine or a measurement.** The home ledger draws, on one scale, the
-highest amount in pounds that each penalty names, from `fine` in
+highest amount in pounds in each penalty, from `fine` in
 `src/data/ledger.json`, beside the penalty as the law writes it and its
 provision; an amount too small to see on the scale is drawn as a hairline. An
 annotated article draws Animal Crime Bureau's measurement, one bar per
@@ -104,15 +120,16 @@ subscription on Substack.
 Every page carries a Content Security Policy: scripts, stylesheets, fonts and
 images load only from this site, and the only scripts written into the pages are
 the two lines the build adds, allowed by their hashes. Nothing is fetched from
-another service. The site sets no cookies and has no analytics. Adding anything from elsewhere, such as an embedded video or a
-counter, means changing the policy in `tools/build.mjs` on purpose; the test
-fails otherwise.
+another service. The site sets no cookies and has no analytics. Adding anything
+from elsewhere, such as an embedded video or a counter, means changing the
+policy in `tools/build.mjs` on purpose; the test fails otherwise.
 
 ## What the build makes
 
 - Every page in English and under `/ar/` in Arabic, including a page for each
   record (`/register/ACB-2026-001/`) and each publication (`/publications/working-paper-2/`).
-- `data/acb-case-register.csv` and `.json`: the published records in both languages.
+- `data/acb-case-register.csv` and `.json`: the published records in both languages,
+  which anyone may reuse with credit to Animal Crime Bureau (CC BY 4.0).
 - `sitemap.xml` with the English and Arabic address of every page.
 - `manifest.webmanifest`, `ar/manifest.webmanifest` and `sw.js`: the site installs
   as an app and its pages can be read without a connection.

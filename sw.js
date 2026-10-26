@@ -2,7 +2,7 @@
 // Pages are fetched from the network first, so corrections reach readers at
 // once, and fall back to the saved copy without a connection. Every page of
 // the site is saved when the worker installs.
-const VERSION = '853c17d8cb';
+const VERSION = '70d46b7407';
 const CACHE = 'acb-' + VERSION;
 const PAGES = ["/","/law/","/law/29-2023/1/","/register/","/register/ACB-2026-001/","/publications/","/publications/working-paper-2/","/publications/method-1/","/publications/investigation-report-1/","/publications/working-paper-1/","/about/","/support/","/ar/","/ar/law/","/ar/law/29-2023/1/","/ar/register/","/ar/register/ACB-2026-001/","/ar/publications/","/ar/publications/working-paper-2/","/ar/publications/method-1/","/ar/publications/investigation-report-1/","/ar/publications/working-paper-1/","/ar/about/","/ar/support/","/offline.html"];
 const ASSETS = ["/assets/site.css?v=c9f597aa64","/assets/site.js?v=f9fd0db08a","/assets/img/acb-logo.svg","/assets/img/favicon.svg","/assets/img/icon-192.png","/assets/fonts/public-sans-latin.woff2","/assets/fonts/plex-arabic-400-arabic.woff2","/assets/fonts/plex-arabic-500-arabic.woff2","/assets/fonts/amiri-400-arabic.woff2"];

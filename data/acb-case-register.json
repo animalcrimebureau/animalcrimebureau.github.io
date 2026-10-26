@@ -2,6 +2,8 @@
   "name": "Case Register",
   "publisher": "Animal Crime Bureau",
   "url": "https://animalcrimebureau.org/register/",
+  "license": "https://creativecommons.org/licenses/by/4.0/",
+  "attribution": "Animal Crime Bureau, Case Register",
   "updated": "2026-10",
   "records": [
     {

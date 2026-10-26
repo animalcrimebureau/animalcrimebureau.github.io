@@ -62,6 +62,7 @@
     "registerDescription": "This register gives each incident that Animal Crime Bureau documents or verifies a fixed number and one standard format, so that it can be cited and counted.",
     "dataHeading": "Data",
     "dataText": "The published records, in English and Arabic, in one file:",
+    "dataLicence": "The data are published under the Creative Commons Attribution 4.0 International licence (<a href=\"https://creativecommons.org/licenses/by/4.0/\">CC BY 4.0</a>): anyone may reuse them, with credit to Animal Crime Bureau.",
     "fields": {
       "month": "Month",
       "governorate": "Governorate",
@@ -129,7 +130,7 @@
       "On iPhone and iPad, in Safari: tap Share, then Add to Home Screen.",
       "On a computer, in Chrome or Edge: choose the install icon in the address bar."
     ],
-    "fineCaption": "Bars show the highest amount in pounds that each penalty names, on one scale.",
+    "fineCaption": "Bars show the highest amount in pounds in each penalty, on one scale.",
     "cmapHeading": "Words taken from the UAE law, by definition",
     "cmapNote": "The share of each definition’s words that appear word for word in Article 1 of the UAE law, in runs of five or more.",
     "cmapNone": "None",
@@ -146,7 +147,7 @@
     "supportContact": "To fund Animal Crime Bureau or work with it, write to {email}.",
     "supportWrite": "Write to Animal Crime Bureau",
     "supportSubject": "Supporting Animal Crime Bureau",
-    "followHeading": "Follow the findings",
+    "followHeading": "Newsletter",
     "follow": "New publications by email",
     "subscribe": "Subscribe",
     "supportDescription": "Animal Crime Bureau documents crimes against animals and measures how the law is applied against the standard the law itself names. To fund it or work with it, write to info@animalcrimebureau.org."
@@ -201,6 +202,7 @@
     "registerDescription": "يمنح هذا السجل كل واقعة توثّقها Animal Crime Bureau أو تتحقق منها رقمًا ثابتًا وصيغة موحّدة، حتى يمكن الاستشهاد بها وإحصاؤها.",
     "dataHeading": "البيانات",
     "dataText": "السجلات المنشورة بالعربية والإنجليزية في ملف واحد:",
+    "dataLicence": "تُنشر البيانات برخصة المشاع الإبداعي، نَسب المُصنَّف ٤٫٠ دولي (<a href=\"https://creativecommons.org/licenses/by/4.0/deed.ar\" lang=\"en\">CC BY 4.0</a>): يجوز لأي أحد إعادة استخدامها مع نسبتها إلى <bdi lang=\"en\">Animal Crime Bureau</bdi>.",
     "fields": {
       "month": "الشهر",
       "governorate": "المحافظة",
@@ -269,7 +271,7 @@
       "على آيفون وآيباد، في متصفح سفاري: الضغط على «مشاركة»، ثم «إضافة إلى الشاشة الرئيسية».",
       "على الكمبيوتر، في كروم أو إيدج: اختيار أيقونة التثبيت في شريط العنوان."
     ],
-    "fineCaption": "تُبيّن الأشرطة أعلى مبلغ بالجنيه يرد في نص كل عقوبة، على مقياس واحد.",
+    "fineCaption": "تُبيّن الأشرطة أعلى مبلغ بالجنيه في كل عقوبة، على مقياس واحد.",
     "cmapHeading": "الكلمات المأخوذة من القانون الإماراتي، حسب التعريف",
     "cmapNote": "نسبة كلمات كل تعريف الواردة بنصها في المادة ١ من القانون الإماراتي، في تتابعات من خمس كلمات أو أكثر.",
     "cmapNone": "لا شيء",
@@ -286,7 +288,7 @@
     "supportContact": "لتمويل <bdi lang=\"en\">Animal Crime Bureau</bdi> أو العمل معها، يُرجى الكتابة إلى {email}.",
     "supportWrite": "الكتابة إلى Animal Crime Bureau",
     "supportSubject": "دعم Animal Crime Bureau",
-    "followHeading": "متابعة النتائج",
+    "followHeading": "النشرة البريدية",
     "follow": "الإصدارات الجديدة بالبريد الإلكتروني",
     "subscribe": "اشترك",
     "supportDescription": "توثّق Animal Crime Bureau الجرائم الواقعة على الحيوانات وتقيس تطبيق القانون بالمعيار الذي يحيل إليه القانون نفسه. لتمويلها أو العمل معها، يُرجى الكتابة إلى info@animalcrimebureau.org."

@@ -70,6 +70,8 @@ const SECTIONS = ['home', 'law', 'register', 'publications', 'about'];
 P.support = l => `${pre(l)}/support/`;
 const DATA_CSV = '/data/acb-case-register.csv';
 const DATA_JSON = '/data/acb-case-register.json';
+// The Case Register's data may be reused by anyone, with credit to Animal Crime Bureau.
+const DATA_LICENCE = 'https://creativecommons.org/licenses/by/4.0/';
 
 const recordById = Object.fromEntries(records.map(r => [r.id, r]));
 // The scale of the ledger's bars: the highest amount in pounds any of its penalties names.
@@ -298,7 +300,7 @@ function registerBody(lang) {
 ${fragment('register-intro', lang)}
 <h2 class="sec">${L.recordsHeading}</h2><ul class="records">${records.map(r => recordItem(r, lang)).join('')}</ul>
 ${fragment('register-method', lang)}
-<h2 class="sec">${L.dataHeading}</h2><p class="prose">${L.dataText} ${files}</p>
+<h2 class="sec">${L.dataHeading}</h2><p class="prose">${L.dataText} ${files}</p><p class="prose">${L.dataLicence}</p>
 <p class="updated">${L.registerUpdated}</p>
 </div>`;
 }
@@ -721,6 +723,7 @@ export function pages() {
         {
           '@type': 'Dataset', name: strip(L.registerHeading), description: L.registerDescription, url: ORIGIN + P.register(lang),
           creator: ORG_REF, publisher: ORG_REF, inLanguage: ['en', 'ar'], spatialCoverage: { '@type': 'Place', name: 'Egypt' },
+          license: DATA_LICENCE, isAccessibleForFree: true,
           distribution: [
             { '@type': 'DataDownload', encodingFormat: 'text/csv', contentUrl: ORIGIN + DATA_CSV },
             { '@type': 'DataDownload', encodingFormat: 'application/json', contentUrl: ORIGIN + DATA_JSON },
@@ -844,7 +847,7 @@ function registerData() {
     url: { en: ORIGIN + P.record('en', r), ar: ORIGIN + P.record('ar', r) },
   }));
   const updated = records.map(r => r.published).sort().pop();
-  const json = JSON.stringify({ name: 'Case Register', publisher: site.name, url: ORIGIN + P.register('en'), updated, records: rows }, null, 2) + '\n';
+  const json = JSON.stringify({ name: 'Case Register', publisher: site.name, url: ORIGIN + P.register('en'), license: DATA_LICENCE, attribution: `${site.name}, Case Register`, updated, records: rows }, null, 2) + '\n';
   const cols = ['reference', 'month', 'published', 'governorate_en', 'governorate_ar', 'animals_en', 'animals_ar', 'documented_en', 'documented_ar', 'provision_en', 'provision_ar', 'evidence_grade', 'evidence_en', 'evidence_ar', 'sources_en', 'sources_ar', 'description_en', 'description_ar', 'related', 'corrections_en', 'corrections_ar', 'url_en', 'url_ar'];
   const flat = rows.map(x => ({
     reference: x.reference, month: x.month, published: x.published,
