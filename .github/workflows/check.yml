@@ -1,6 +1,6 @@
 # On every pull request and every push to main: the committed pages must be
 # what the sources build, every link, anchor, preview and app file must
-# resolve, and the site must work in a browser and meet WCAG 2.1 AA.
+# resolve, and the site must work in a browser and meet WCAG 2.2 AA.
 name: Check the site
 
 on:

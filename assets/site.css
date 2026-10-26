@@ -30,7 +30,7 @@ a:focus-visible,button:focus-visible,summary:focus-visible{outline:2px solid var
 img{max-width:100%;height:auto;display:block}
 p{margin:0 0 1rem}
 h1,h2,h3,h4{font-weight:500;margin:0;text-wrap:balance}
-p,li,dd,small,.pk-s,.pub-sub,.rec-sum{text-wrap:pretty}
+p,li,dd,small,.pk-pen,.pk-prov,.pub-sub,.rec-sum,.next-s,.work-s{text-wrap:pretty}
 b,strong{font-weight:500}
 em{font-style:normal;font-weight:500}
 ul,ol{margin:0;padding:0}
@@ -49,6 +49,10 @@ main{flex:1 0 auto;container:main / inline-size;padding-block:2.25rem 4.5rem}
 .brand img{height:26px;width:auto}
 
 .top{position:sticky;top:0;z-index:40;display:flex;align-items:center;justify-content:space-between;gap:1rem;min-height:calc(var(--top) + env(safe-area-inset-top,0px));padding:env(safe-area-inset-top,0px) max(16px,env(safe-area-inset-right,0px)) 0 max(16px,env(safe-area-inset-left,0px));background:rgba(255,255,255,.94);-webkit-backdrop-filter:saturate(1.8) blur(14px);backdrop-filter:saturate(1.8) blur(14px);border-bottom:1px solid var(--line)}
+.top-end{display:flex;align-items:center;gap:.9rem}
+.top-cta{padding:6px 12px;border:1px solid var(--ink);color:var(--ink);font-size:.875rem;font-weight:500;line-height:1.3;text-decoration:none;white-space:nowrap}
+.top-cta[aria-current]{background:var(--ink);color:#fff}
+@media (max-width:23.5rem){.top .brand span{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}}
 .top .lang{padding:10px 2px;color:var(--ink-2);font-size:.9375rem;text-decoration:none}
 .top .lang:hover{color:var(--ink)}
 /* The one Arabic word on an English page is set in the system's Arabic font rather than loading a web font for it. */
@@ -63,6 +67,7 @@ html[lang="ar"] .tabs a{font-size:.75rem}
 .tabs a[aria-current]::before{content:"";position:absolute;top:0;left:50%;width:24px;height:2px;margin-left:-12px;background:var(--ink)}
 .tabs a[aria-current] span{font-weight:500}
 body{padding-bottom:calc(var(--tabs) + env(safe-area-inset-bottom,0px))}
+html{scroll-padding-top:calc(var(--top) + env(safe-area-inset-top,0px) + .75rem);scroll-padding-bottom:calc(var(--tabs) + env(safe-area-inset-bottom,0px) + .75rem)}
 
 .side{display:none}
 .side-nav ul{list-style:none}
@@ -91,6 +96,7 @@ body{padding-bottom:calc(var(--tabs) + env(safe-area-inset-bottom,0px))}
 
 @media (min-width:64rem){
   body{padding-bottom:0}
+  html{scroll-padding:0}
   .top,.tabs{display:none}
   .app{display:grid;grid-template-columns:var(--side) minmax(0,1fr);grid-template-rows:1fr auto}
   .side{display:flex;flex-direction:column;grid-column:1;grid-row:1 / span 2;align-self:start;position:sticky;top:0;height:100vh;height:100dvh;overflow-y:auto;overscroll-behavior:contain;padding:1.6rem 1rem 1.4rem;border-inline-end:1px solid var(--line)}
@@ -141,22 +147,33 @@ html[dir="rtl"] .btn svg{transform:scaleX(-1)}
 .thesis{font-size:1.5rem;font-weight:400;line-height:1.4;letter-spacing:-.01em;margin:0 0 3.25rem;max-width:34rem}
 html[lang="ar"] .thesis{line-height:1.75}
 .ledger-h{font-size:1.25rem;line-height:1.35}
-.ledger-sub{margin:.4rem 0 1.5rem;font-size:.9375rem;color:var(--ink-2);max-width:34rem}
+.ledger-sub{margin:.4rem 0 1.5rem;font-size:.9375rem;color:var(--ink-2);max-width:36rem}
+.ledger-cap{color:var(--ink-3)}
 .ledger-note{margin:1rem 0 0;font-size:.8125rem;color:var(--ink-3)}
 .picker{border-top:1px solid var(--line)}
 .pk-h{font-size:inherit;line-height:inherit}
-.pk{display:flex;align-items:center;gap:1rem;width:100%;margin:0;padding:1rem .15rem;border:0;border-bottom:1px solid var(--line);background:none;text-align:start;cursor:pointer;scroll-margin-top:calc(var(--top) + .5rem);-webkit-tap-highlight-color:transparent}
+.pk{display:flex;align-items:center;gap:1rem;width:100%;margin:0;padding:1rem .15rem;border:0;border-bottom:1px solid var(--line);background:none;text-align:start;cursor:pointer;-webkit-tap-highlight-color:transparent}
 .js .picker:not([data-ready]) .pp{display:none}
 html:not(.js) .pk{cursor:default}
 .pk-txt{flex:1 1 auto;min-width:0}
 .pk-t{display:block;font-size:1.125rem;font-weight:500;line-height:1.4}
-.pk-s{display:block;margin-top:.15rem;font-size:.875rem;font-weight:400;color:var(--ink-2)}
+/* Bars: ink for an amount a law names, red for what Animal Crime Bureau measured. An amount too small
+   to see on the scale is drawn as a hairline. Unless the reader asks for less motion, a bar draws in once. */
+.bar{display:block;height:6px;background:var(--line)}
+.bar i{display:block;height:100%;width:max(2px,calc(var(--v) * 100%));background:var(--ink);transform-origin:left center}
+html[dir="rtl"] .bar i{transform-origin:right center}
+.bar-m i{background:var(--red)}
+@media (prefers-reduced-motion:no-preference){.bar i{animation:draw .7s cubic-bezier(.2,.7,.2,1) both}}
+@keyframes draw{from{transform:scaleX(0)}}
+.pk .bar{margin-top:.55rem}
+.pk-pen{display:block;margin-top:.4rem;font-size:.875rem;line-height:1.5;color:var(--ink-2);font-variant-numeric:tabular-nums}
+.pk-prov{display:block;margin-top:.2rem;font-size:.8125rem;line-height:1.45;color:var(--ink-3)}
 .chev{width:20px;height:20px;fill:none;stroke:var(--ink-2);stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;transition:transform .2s ease}
 html:not(.js) .chev{display:none}
 .pk[aria-expanded="true"] .chev{transform:rotate(180deg)}
 .pp{margin:1rem 0 1.25rem;padding:.1rem 0 .25rem;padding-inline-start:1rem;border-inline-start:2px solid var(--red)}
 .pp-k{margin:0 0 .15rem;font-size:.8125rem;color:var(--ink-2)}
-.pp-pen{margin:0 0 1.25rem;font-size:1.3125rem;line-height:1.45;letter-spacing:-.005em}
+.pp-act{margin:0 0 1.25rem;font-size:1.3125rem;line-height:1.45;letter-spacing:-.005em}
 .pp-f{display:grid;grid-template-columns:minmax(6.5rem,auto) minmax(0,1fr);gap:.6rem 1.25rem;margin:0}
 .pp-f dt{font-size:.875rem;color:var(--ink-2);padding-top:.12rem}
 .pp-f dd{margin:0}
@@ -176,7 +193,7 @@ html:not(.js) .chev{display:none}
   .js .pk[aria-expanded="true"]{background:var(--wash);border-inline-start-color:var(--ink)}
   .js .chev{display:none}
   .js .pp{grid-column:2;grid-row:1 / -1;align-self:start;margin:0;padding:.55rem 0 .6rem;padding-inline-start:1.6rem}
-  .js .pp-pen{font-size:1.5rem;line-height:1.4}
+  .js .pp-act{font-size:1.5rem;line-height:1.4}
 }
 .latest{display:grid;gap:2.75rem;margin-top:4.25rem}
 .latest-label{margin:0 0 .75rem;font-size:.875rem;font-weight:400;color:var(--ink-2)}
@@ -263,20 +280,11 @@ html[dir="rtl"] .rec-no{text-align:right}
 .art-sub{color:var(--ink-2);margin-top:.3rem!important}
 .law-sum{font-size:1.125rem;line-height:1.55;max-width:40rem}
 .key{font-size:.9375rem;color:var(--ink-2);max-width:40rem}
-.toc-m{max-width:40rem;margin:1.5rem 0 .5rem;border:1px solid var(--line-2)}
-.toc-m summary{display:flex;align-items:center;gap:.5rem;padding:.8rem 1rem;cursor:pointer;list-style:none;font-weight:500}
-.toc-m summary::-webkit-details-marker{display:none}
-.toc-m summary::after{content:"";width:7px;height:7px;margin-inline-start:auto;border-right:1.6px solid var(--ink-2);border-bottom:1.6px solid var(--ink-2);transform:translateY(-2px) rotate(45deg);transition:transform .2s ease}
-.toc-m[open] summary::after{transform:translateY(2px) rotate(-135deg)}
-.toc-n{font-weight:400;color:var(--ink-3)}
-.toc{list-style:none;padding:0 1rem .4rem;border-top:1px solid var(--line)}
-.toc a{display:block;padding:.45rem 0;text-decoration:none}
-.toc-key{margin:0;padding:.2rem 1rem 1rem;font-size:.8125rem;line-height:1.5;color:var(--ink-2)}
-.sh-t::after,.toc-key::before,.terms-key::before{content:"";display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--red);vertical-align:.12em}
+.sh-t::after,.terms-key::before,.cmap-key::before{content:"";display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--red);vertical-align:.12em}
 .sh-t::after{margin-inline-start:.5rem}
-.toc-key::before,.terms-key::before{margin-inline-end:.45rem}
+.terms-key::before,.cmap-key::before{margin-inline-end:.45rem}
 .article{margin-top:1.5rem}
-.cl{padding-top:1.75rem;scroll-margin-top:calc(var(--top) + 1rem)}
+.cl{padding-top:1.75rem}
 .cl p{margin:0}
 .cl .ar{font-family:var(--law);font-size:1.3rem;line-height:2}
 .cl .ar b{font-weight:700}
@@ -295,14 +303,57 @@ html[dir="rtl"] .rec-no{text-align:right}
   .nt{grid-column:2;align-self:start;margin-top:2.15rem}
 }
 @media (min-width:64rem){
-  .toc-m{display:none}
   .cl{scroll-margin-top:1.5rem}
 }
+
+/* Copy map: Animal Crime Bureau's measurement of an article, one row per definition. */
+.cmap{max-width:44rem;margin:2rem 0 .5rem}
+.cmap figcaption{margin:0 0 .9rem}
+.cmap-t{display:block;font-weight:500}
+.cmap-s{display:block;margin-top:.2rem;font-size:.875rem;color:var(--ink-2)}
+.cmap-list{list-style:none;border-top:1px solid var(--line)}
+.cmap-list a{display:grid;grid-template-columns:minmax(0,13rem) minmax(0,1fr) 8.5rem;align-items:center;gap:.3rem 1rem;padding:.55rem .25rem;border-bottom:1px solid var(--line);text-decoration:none}
+.cmap-list a:hover{background:var(--hover)}
+.cmap-term{font-size:.9375rem;line-height:1.35}
+.cmap-val{font-size:.8125rem;color:var(--ink-2);text-align:end;font-variant-numeric:tabular-nums}
+.cmap > .cmap-t{margin:0 0 .9rem}
+.cmap-terms a{grid-template-columns:minmax(0,1fr)}
+.cmap-key{margin:.75rem 0 0}
+@container main (max-width:34rem){
+  .cmap-list a{grid-template-columns:minmax(0,1fr) auto}
+  .cmap-list .bar{grid-column:1 / -1;grid-row:2}
+}
+
+/* Next: the one page that carries the story on. */
+.next{margin-top:3.5rem}
+.next a{display:grid;grid-template-columns:minmax(0,1fr) auto;column-gap:1.25rem;padding:1.25rem 0;border-top:2px solid var(--ink);border-bottom:1px solid var(--line);text-decoration:none}
+.next a:hover .next-t{text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:.24em}
+.next-k{grid-column:1;font-size:.8125rem;color:var(--ink-2)}
+.next-t{grid-column:1;margin-top:.15rem;font-size:1.25rem;font-weight:500;line-height:1.35}
+.next-s{grid-column:1;margin-top:.3rem;font-size:.9375rem;color:var(--ink-2)}
+.next .go,.cta .go,.work-link .go{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.next .go{grid-column:2;grid-row:1 / span 3;align-self:center}
+html[dir="rtl"] .go{transform:scaleX(-1)}
+
+/* Support */
+.cta{display:flex;align-items:center;justify-content:space-between;gap:.75rem;margin:1.5rem .75rem 0;padding:.7rem .9rem;border:1px solid var(--ink);color:var(--ink);font-size:.9375rem;font-weight:500;text-decoration:none}
+.cta:hover,.cta[aria-current]{background:var(--ink);color:#fff}
+.ask{margin:2.5rem 0;padding:1.25rem 1.5rem 1.5rem;border:1px solid var(--line-2)}
+.ask .sec{margin-top:0}
+.ask p:last-child{margin-bottom:0}
+.works{list-style:none;border-top:1px solid var(--line)}
+.work-link{display:grid;grid-template-columns:minmax(0,1fr) auto;column-gap:1rem;padding:1rem 0;border-bottom:1px solid var(--line);text-decoration:none}
+.work-link:hover .work-t{text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:.24em}
+.work-t{grid-column:1;font-weight:500}
+.work-s{grid-column:1;margin-top:.2rem;font-size:.9375rem;color:var(--ink-2)}
+.work-link .go{grid-column:2;grid-row:1 / span 2;align-self:center;color:var(--ink-2)}
 
 .foot{border-top:1px solid var(--line);padding:2.5rem 0 2.75rem;font-size:.9375rem;color:var(--ink-2)}
 .foot p{margin:0 0 .5rem}
 .foot-brand{color:var(--ink);font-weight:500}
 .links{display:flex;flex-wrap:wrap;gap:.25rem 1.5rem}
+.foot-more{display:flex;flex-wrap:wrap;gap:.25rem 1.5rem;margin-top:1rem!important}
+.foot-more a{color:var(--ink)}
 .foot-install{margin-top:1rem!important}
 .steps li{padding-inline-start:1rem;border-inline-start:2px solid var(--line)}
 .print-src{display:none}
@@ -314,7 +365,8 @@ html[dir="rtl"] .rec-no{text-align:right}
 /* Print: the text alone, edge to edge within the page margins, with the address it came from. */
 @media print{
   @page{margin:16mm 15mm}
-  .side,.top,.tabs,.skip,.acts,.toc-m,.back,.install,.chev,.foot .links,.foot-install{display:none!important}
+  .side,.top,.tabs,.skip,.acts,.back,.install,.chev,.foot .links,.foot-more,.foot-install,.next{display:none!important}
+  .bar i{animation:none!important}
   body{padding:0;font-size:11pt}
   .app{display:block}
   main{padding:0}

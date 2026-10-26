@@ -19,7 +19,7 @@ Edit the sources in `src/`, never the generated HTML: the next build overwrites 
 | `src/data/register.json` | Case Register records, newest first |
 | `src/data/publications.json` | Publications, newest first |
 | `src/data/laws.json`, `src/fragments/law-*.html` | The law library and its annotated articles |
-| `src/fragments/*.html` | Longer passages: About, the register's introduction and method |
+| `src/fragments/*.html` | Longer passages: About and its standards, the register's introduction and method |
 
 Then, from the repository root:
 
@@ -27,7 +27,7 @@ Then, from the repository root:
 node tools/images.mjs   # only after adding a page or changing a title: icons and link previews
 node tools/build.mjs    # every page, the sitemap, the app files, the register as CSV and JSON
 node tools/check.mjs    # links, anchors, headings, previews and app files
-node tools/test.mjs     # the site in a browser: ledger, citations, offline, install, phone, print, accessibility
+node tools/test.mjs     # the site in a browser: ledger, copy map, citations, offline, install, phone, print, accessibility
 ```
 
 `tools/images.mjs` and `tools/test.mjs` need Playwright and its Chromium, and the
@@ -37,7 +37,7 @@ is incomplete, for example a record without its Arabic text or a provision that
 `provisions.json` does not have. On every pull request, GitHub runs all four
 (`.github/workflows/check.yml`, without the images) and fails if the committed
 pages differ from what the sources build, if a link breaks, or if a page stops
-working in the browser or meeting WCAG 2.1 AA.
+working in the browser or meeting WCAG 2.2 AA.
 
 ## Common tasks
 
@@ -64,6 +64,19 @@ its `slug` (the address, such as `working-paper-3`), `ref`, `date` (`2026-12`),
 `language`, `url` of the full text, `title`, `subtitle`, and `series` and `date`
 under `en` and `ar`. `tool`, `version` and `related` are optional.
 
+**Draw a fine or a measurement.** The home ledger draws, on one scale, the
+highest amount in pounds that each penalty names, from `fine` in
+`src/data/ledger.json`, beside the penalty as the law writes it and its
+provision; an amount too small to see on the scale is drawn as a hairline. An
+annotated article draws Animal Crime Bureau's measurement, one bar per
+definition, from `measure` in `src/data/laws.json`: `[shared, total]` words as
+its notes count them, `0` for none, or `"whole"` for a definition its red line
+marks from end to end and its notes do not count. The build refuses a fine that
+is not the highest amount in the penalty, English and Arabic penalties that name
+different amounts, and a measurement that differs from the article's notes or
+from the words its red line marks, so a bar never draws what the text does not
+say.
+
 **Record a correction.** Never change a published text silently. Add the
 correction, with its date and both languages, to the record or publication it
 amends:
@@ -76,6 +89,15 @@ amends:
 
 The page then shows "Amended 3 November 2026" under its title and the dated list
 below it, and the register's data files carry it.
+
+## How a reader moves through the site
+
+Every page ends on one page that carries the story on: the law, what happens
+under it in the Case Register, what Animal Crime Bureau published, and how to
+support the work. The order is `nextKey` in `tools/build.mjs`. The Support page,
+the button at the foot of the sidebar and the one in the phone's top bar
+are how a funder reaches Animal Crime Bureau; the footer also links to email
+subscription on Substack.
 
 ## Privacy and security
 

@@ -1,10 +1,12 @@
 #!/usr/bin/env node
 // Checks the built site: every internal link and anchor resolves, every page
 // has one h1, a title, a description and its link preview, the structured data
-// parses, and every file the service worker saves exists. Run: node tools/check.mjs
+// parses, every file the service worker saves exists, and every page it saves
+// opens without a connection. Run: node tools/check.mjs
 
 import { readFileSync, existsSync, statSync } from 'node:fs';
 import { join } from 'node:path';
+import { runInNewContext } from 'node:vm';
 import { ROOT, pages } from './build.mjs';
 
 const problems = [];
@@ -66,6 +68,20 @@ const sw = readFileSync(join(ROOT, 'sw.js'), 'utf8');
 for (const list of ['PAGES', 'ASSETS']) {
   const m = sw.match(new RegExp(`const ${list} = (\\[.*?\\]);`));
   for (const p of JSON.parse(m[1])) if (!fileFor(p)) fail('sw.js', `saves a missing file ${p}`);
+}
+// A saved page only opens without a connection if the worker answers for it. Run the worker's own
+// code with a stand-in for the browser and open every page it saves.
+const listeners = {};
+const origin = 'https://animalcrimebureau.org';
+runInNewContext(sw, { self: { addEventListener: (type, fn) => { listeners[type] = fn; }, location: { origin } }, URL });
+for (const p of JSON.parse(sw.match(/const PAGES = (\[.*?\]);/)[1])) {
+  let answered = false;
+  listeners.fetch({
+    request: { method: 'GET', mode: 'navigate', url: origin + p },
+    respondWith: reply => { answered = true; Promise.resolve(reply).catch(() => {}); },
+    waitUntil: () => {},
+  });
+  if (!answered) fail('sw.js', `does not open ${p} without a connection`);
 }
 for (const m of ['manifest.webmanifest', 'ar/manifest.webmanifest']) {
   const man = JSON.parse(readFileSync(join(ROOT, m), 'utf8'));

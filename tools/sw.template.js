@@ -6,8 +6,9 @@ const VERSION = '__VERSION__';
 const CACHE = 'acb-' + VERSION;
 const PAGES = __PAGES__;
 const ASSETS = __ASSETS__;
-// Only this site's own sections; other projects on the domain, such as /law-xray/, are left alone.
-const SECTIONS = new Set(['', 'ar', 'law', 'register', 'publications', 'about', 'offline.html']);
+// Only this site's own sections, listed by the build from its pages; other projects on the
+// domain, such as /law-xray/, are left alone.
+const SECTIONS = new Set(__SECTIONS__);
 const WAIT = 3000;
 
 self.addEventListener('install', event => {
