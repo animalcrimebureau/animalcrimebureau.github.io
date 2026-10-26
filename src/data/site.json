@@ -38,7 +38,6 @@
     "ledgerSub": "Each category of animal falls under a different law, which punishes a different act with a different penalty.",
     "ledgerNote": "As written in the law. October 2026.",
     "ledgerFields": {
-      "penalty": "Penalty",
       "act": "Act",
       "provision": "Provision",
       "register": "Case Register",
@@ -129,7 +128,28 @@
       "On Android, in Chrome: open the menu and choose Install app or Add to Home screen.",
       "On iPhone and iPad, in Safari: tap Share, then Add to Home Screen.",
       "On a computer, in Chrome or Edge: choose the install icon in the address bar."
-    ]
+    ],
+    "fineCaption": "Bars show the highest amount in pounds that each penalty names, on one scale.",
+    "cmapHeading": "Words taken from the UAE law, by definition",
+    "cmapNote": "The share of each definition’s words that appear word for word in Article 1 of the UAE law, in runs of five or more.",
+    "cmapNone": "None",
+    "cmapWhole": "Whole definition",
+    "cmapAll": "All {t} words",
+    "cmapOf": "{s} of {t} words",
+    "next": "Next",
+    "support": "Support this work",
+    "supportShort": "Support",
+    "supportHeading": "Support this work",
+    "supportWork": "The work",
+    "supportStandards": "Standards",
+    "supportContactHeading": "Fund or partner",
+    "supportContact": "To fund Animal Crime Bureau or work with it, write to {email}.",
+    "supportWrite": "Write to Animal Crime Bureau",
+    "supportSubject": "Supporting Animal Crime Bureau",
+    "followHeading": "Follow the findings",
+    "follow": "New publications by email",
+    "subscribe": "Subscribe",
+    "supportDescription": "Animal Crime Bureau documents crimes against animals and measures how the law is applied against the standard the law itself names. To fund it or work with it, write to info@animalcrimebureau.org."
   },
   "ar": {
     "langName": "العربية",
@@ -157,7 +177,6 @@
     "ledgerSub": "تخضع كل فئة من الحيوانات لقانون مختلف، يعاقب على فعل مختلف بعقوبة مختلفة.",
     "ledgerNote": "كما وردت في نص القانون. أكتوبر ٢٠٢٦.",
     "ledgerFields": {
-      "penalty": "العقوبة",
       "act": "الفعل",
       "provision": "النص",
       "register": "سجل الحالات",
@@ -249,6 +268,28 @@
       "على أندرويد، في متصفح كروم: من القائمة، اختيار «تثبيت التطبيق» أو «إضافة إلى الشاشة الرئيسية».",
       "على آيفون وآيباد، في متصفح سفاري: الضغط على «مشاركة»، ثم «إضافة إلى الشاشة الرئيسية».",
       "على الكمبيوتر، في كروم أو إيدج: اختيار أيقونة التثبيت في شريط العنوان."
-    ]
-  }
+    ],
+    "fineCaption": "تُبيّن الأشرطة أعلى مبلغ بالجنيه يرد في نص كل عقوبة، على مقياس واحد.",
+    "cmapHeading": "الكلمات المأخوذة من القانون الإماراتي، حسب التعريف",
+    "cmapNote": "نسبة كلمات كل تعريف الواردة بنصها في المادة ١ من القانون الإماراتي، في تتابعات من خمس كلمات أو أكثر.",
+    "cmapNone": "لا شيء",
+    "cmapWhole": "التعريف كله",
+    "cmapAll": "الكلمات الـ{t} كلها",
+    "cmapOf": "{s} {w} من {t}",
+    "next": "التالي",
+    "support": "ادعم هذا العمل",
+    "supportShort": "ادعم",
+    "supportHeading": "ادعم هذا العمل",
+    "supportWork": "العمل",
+    "supportStandards": "المعايير",
+    "supportContactHeading": "التمويل والشراكة",
+    "supportContact": "لتمويل <bdi lang=\"en\">Animal Crime Bureau</bdi> أو العمل معها، يُرجى الكتابة إلى {email}.",
+    "supportWrite": "الكتابة إلى Animal Crime Bureau",
+    "supportSubject": "دعم Animal Crime Bureau",
+    "followHeading": "متابعة النتائج",
+    "follow": "الإصدارات الجديدة بالبريد الإلكتروني",
+    "subscribe": "اشترك",
+    "supportDescription": "توثّق Animal Crime Bureau الجرائم الواقعة على الحيوانات وتقيس تطبيق القانون بالمعيار الذي يحيل إليه القانون نفسه. لتمويلها أو العمل معها، يُرجى الكتابة إلى info@animalcrimebureau.org."
+  },
+  "subscribeUrl": "https://animalcrimebureau.substack.com/subscribe"
 }

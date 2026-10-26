@@ -1,9 +1,10 @@
 #!/usr/bin/env node
 // Opens the built site in a browser and uses it as a reader would: the ledger
-// on the home page, old record links, copying a citation, the index of
-// definitions, reading offline, installing, the tab bar on a phone, narrow
-// screens and print. It also checks that no page fetches anything from another
-// site and, when axe-core is installed, that every page meets WCAG 2.1 AA.
+// on the home page, the copy map, the way from page to page, old record links,
+// copying a citation, the index of definitions, reading offline, installing,
+// the tab bar on a phone, narrow screens and print. It also checks that no page
+// fetches anything from another site and, when axe-core is installed, that
+// every page meets WCAG 2.2 AA.
 // Needs Playwright and its Chromium. Run after building: node tools/test.mjs
 
 import { createServer } from 'node:http';
@@ -77,8 +78,8 @@ const sideways = async (context, width) => {
 
 const browser = await chromium.launch();
 try {
-  // Wide screen.
-  const wide = await browser.newContext({ viewport: { width: 1280, height: 800 } });
+  // Wide screen. With reduced motion the bars are drawn at once and the page jumps without scrolling smoothly.
+  const wide = await browser.newContext({ viewport: { width: 1280, height: 800 }, reducedMotion: 'reduce' });
   await wide.grantPermissions(['clipboard-read', 'clipboard-write'], { origin: base });
   let page = await wide.newPage();
   watch(page);
@@ -94,6 +95,31 @@ try {
   await page.keyboard.press('End');
   check(await open(page) === '0001', 'home: End goes to the last category, Home to the first');
   await page.keyboard.press('Home');
+  // The bars share one scale: the highest fine fills its track, the others take their share of it.
+  const fines = await page.$$eval('.pk', buttons => buttons.map(b => {
+    const track = b.querySelector('.bar');
+    if (!track) return null;
+    return b.querySelector('.bar i').getBoundingClientRect().width / track.getBoundingClientRect().width;
+  }));
+  check(fines[0] > 0.99 && Math.abs(fines[1] - 0.1) < 0.01 && fines[2] === null && fines[3] > 0 && fines[3] < 0.02,
+    `home: the fines are drawn on one scale (${fines.map(f => (f === null ? '-' : f.toFixed(3))).join(', ')})`);
+  check(await page.$$eval('.pk', buttons => buttons.every(b => b.querySelector('.pk-pen')?.textContent.trim() && b.querySelector('.pk-prov')?.textContent.trim())),
+    'home: each category states its penalty with the provision that sets it');
+
+  await page.goto(`${base}/support/`, { waitUntil: 'networkidle' });
+  check(await page.$eval('.side .cta', a => a.getAttribute('aria-current') === 'page'), 'support: the sidebar marks the page');
+  check(await page.$eval('.ask .btn', a => a.href.startsWith('mailto:info@animalcrimebureau.org?subject=')), 'support: the button opens an email to Animal Crime Bureau');
+  // Page by page, the home page leads to the Support page, which ends the way, and no page comes round twice.
+  for (const [start, end] of [['/', '/support/'], ['/ar/', '/ar/support/']]) {
+    const walked = [];
+    let at = start;
+    while (at && !walked.includes(at) && walked.length <= all.length) {
+      walked.push(at);
+      await page.goto(base + at, { waitUntil: 'networkidle' });
+      at = await page.$eval('.next a', a => new URL(a.href).pathname).catch(() => null);
+    }
+    check(!at && walked[walked.length - 1] === end, `next: page by page, ${start} leads to ${end} (${walked.join(' > ')}${at ? ` > ${at}` : ''})`);
+  }
 
   await page.goto(`${base}/register/#ACB-2026-001`, { waitUntil: 'networkidle' });
   check(page.url().endsWith('/register/ACB-2026-001/'), 'register: an old link to a record opens the record page');
@@ -111,6 +137,14 @@ try {
   await page.emulateMedia({ media: 'screen' });
 
   await page.goto(`${base}/law/29-2023/1/`, { waitUntil: 'networkidle' });
+  const shares = await page.$$eval('.cmap-list a', rows => rows.map(r => {
+    const fill = r.querySelector('.bar i');
+    return fill ? fill.getBoundingClientRect().width / r.querySelector('.bar').getBoundingClientRect().width : 0;
+  }));
+  const expected = [5 / 17, 16 / 22, 0, 1, 6 / 16, 13 / 21, 0, 0, 1, 0, 0];
+  check(shares.length === 11 && shares.every((v, i) => Math.abs(v - expected[i]) < 0.01), 'article: the copy map draws the measurement in the notes');
+  await page.click('.cmap-list a[href="#c5"]');
+  check(await page.waitForFunction(() => location.hash === '#c5').then(() => true, () => false), 'article: a row of the copy map opens its definition');
   for (const id of ['c0', 'c3', 'c5', 'c8']) {
     await page.click(`.side-nav .terms a[href="#${id}"]`);
     const marked = await page.waitForFunction(want => document.querySelector('.side-nav .terms a.on')?.hash === want, `#${id}`, { timeout: 4000 }).then(() => true, () => false);
@@ -135,6 +169,8 @@ try {
   await wide.setOffline(true);
   await page.goto(`${base}/ar/publications/method-1/`);
   check((await page.textContent('h1')).includes('The Incorporation Audit'), 'offline: a saved page opens without a connection');
+  const support = await page.goto(`${base}/support/`).then(() => page.textContent('h1'), () => '');
+  check(support === 'Support this work', 'offline: the Support page opens without a connection');
   await page.goto(`${base}/register/ACB-2026-999/`);
   check((await page.textContent('h1')) === 'No connection', 'offline: a page that was never saved says so');
   await wide.setOffline(false);
@@ -153,6 +189,26 @@ try {
   check(await page.$eval('#pk-3', b => { const r = b.getBoundingClientRect(); return r.top >= 0 && r.bottom <= innerHeight; }), 'phone: the opened category stays on screen');
   check(await page.$eval('.tabs', t => Math.abs(t.getBoundingClientRect().bottom - innerHeight) < 1), 'phone: the tab bar sits at the bottom of the screen');
   await sideways(phone, 390);
+  // WCAG 2.4.11: moving through a page with the keyboard never leaves focus under the bars at the top and bottom.
+  // Reduced motion makes the browser scroll at once, so where focus lands can be measured straight away.
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  for (const path of ['/', '/law/29-2023/1/', '/ar/support/']) {
+    await page.goto(base + path, { waitUntil: 'networkidle' });
+    let hidden = 0;
+    for (let i = 0; i < 40; i++) {
+      await page.keyboard.press('Tab');
+      hidden += await page.evaluate(() => {
+        const el = document.activeElement;
+        if (!el || el === document.body || el.closest('.top, .tabs, .skip')) return 0;
+        const r = el.getBoundingClientRect();
+        const top = document.querySelector('.top').getBoundingClientRect().bottom;
+        const bottom = document.querySelector('.tabs').getBoundingClientRect().top;
+        return r.bottom <= top || r.top >= bottom ? 1 : 0;
+      });
+    }
+    check(!hidden, `phone: focus is never hidden under the bars on ${path}`);
+  }
+
   await phone.close();
 
   // The narrowest screen the guidelines ask for (WCAG 1.4.10).
@@ -169,12 +225,12 @@ try {
       for (const path of all) {
         await a11y.goto(base + path, { waitUntil: 'networkidle' });
         await a11y.addScriptTag({ content: axe });
-        const v = await a11y.evaluate(async () => (await window.axe.run(document, { runOnly: ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'best-practice'] })).violations.map(x => x.id));
+        const v = await a11y.evaluate(async () => (await window.axe.run(document, { runOnly: ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa', 'best-practice'] })).violations.map(x => x.id));
         if (v.length) found.push(`${viewport.width}px ${path}: ${v.join(', ')}`);
       }
       await context.close();
     }
-    check(!found.length, `accessibility: no WCAG 2.1 AA problems on ${all.length} pages, wide and narrow${found.length ? `\n  ${found.join('\n  ')}` : ''}`);
+    check(!found.length, `accessibility: no WCAG 2.2 AA problems on ${all.length} pages, wide and narrow${found.length ? `\n  ${found.join('\n  ')}` : ''}`);
   } else if (process.env.CI) {
     check(false, 'accessibility: axe-core is not installed');
   } else {

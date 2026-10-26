@@ -38,8 +38,12 @@ function card(c, lang) {
   .s{font-size:28px;color:#5C5C5C;line-height:${rtl ? 1.7 : 1.4};margin:20px 0 0;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
   .u{direction:ltr;margin-top:46px;font-size:22px;color:#767676;align-self:flex-start}
   .lt{direction:ltr;unicode-bidi:isolate}
+  .head{display:flex;justify-content:space-between;align-items:flex-start}
+  .bars{direction:ltr;display:flex;gap:9px;align-items:flex-end}
+  .bars i{display:flex;align-items:flex-end;width:20px;height:150px;background:#E7E7E7}
+  .bars b{display:block;width:100%;background:#9B2226}
   </style></head><body>
-  <div class="brand">${LOGO}<span>${site.name}</span></div>
+  <div class="head"><div class="brand">${LOGO}<span>${site.name}</span></div>${c.bars ? `<div class="bars">${(rtl ? [...c.bars].reverse() : c.bars).map(v => `<i><b style="height:${(v * 100).toFixed(1)}%"></b></i>`).join('')}</div>` : ''}</div>
   <div class="body">${c.kicker ? `<p class="k">${strip(c.kicker)}</p>` : ''}<p class="t"${c.latinTitle && rtl ? ' dir="ltr" style="text-align:right"' : ''}>${title}</p>${c.sub ? `<p class="s"${c.latinTitle && rtl ? ' dir="ltr" style="text-align:right"' : ''}>${strip(c.sub)}</p>` : ''}</div>
   <div class="u">animalcrimebureau.org</div>
   </body></html>`;

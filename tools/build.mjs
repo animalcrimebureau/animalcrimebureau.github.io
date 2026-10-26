@@ -41,6 +41,10 @@ const formatDate = (iso, lang) => {
   const text = `${day ? `${Number(day)} ` : ''}${site[lang].months[Number(m) - 1]} ${y}`;
   return num(text, lang);
 };
+// In Arabic text the organization's English name keeps its own direction.
+const brandIn = (text, lang) => (lang === 'ar' ? text.replace(/Animal Crime Bureau( \(ACB\))?/, m => `<bdi lang="en">${m}</bdi>`) : text);
+// Arabic counts its nouns: 3 to 10 take the plural, other numbers the singular (103 كلمات, 111 كلمة).
+const arWords = n => (n === 1 ? 'كلمة' : n === 2 ? 'كلمتان' : n % 100 >= 3 && n % 100 <= 10 ? 'كلمات' : 'كلمة');
 const ref = (r, lang, cls = 'ref') => (lang === 'ar' ? `<bdi class="${cls}" lang="en">${r}</bdi>` : `<span class="${cls}">${r}</span>`);
 const brandName = lang => (lang === 'ar' ? `<span lang="en">${site.name}</span>` : `<span>${site.name}</span>`);
 const fragment = (name, lang) => read(`src/fragments/${name}.${lang}.html`).trim();
@@ -63,10 +67,13 @@ export const P = {
   about: l => `${pre(l)}/about/`,
 };
 const SECTIONS = ['home', 'law', 'register', 'publications', 'about'];
+P.support = l => `${pre(l)}/support/`;
 const DATA_CSV = '/data/acb-case-register.csv';
 const DATA_JSON = '/data/acb-case-register.json';
 
 const recordById = Object.fromEntries(records.map(r => [r.id, r]));
+// The scale of the ledger's bars: the highest amount in pounds any of its penalties names.
+const topFine = Math.max(...ledger.map(it => it.fine || 0));
 const pubBySlug = Object.fromEntries(publications.map(p => [p.slug, p]));
 const articleByKey = {};
 for (const law of laws) for (const a of law.articles) articleByKey[`${law.id}/${a.n}`] = { law, a };
@@ -179,12 +186,14 @@ function homeBody(lang) {
       onSite = `<dt>${F.site}</dt><dd><a href="${P.article(lang, law, a)}">${fill(L.annotatedLink, { article: a[lang].article })}</a></dd>`;
     }
     const provText = prov[lang] + (lang === 'en' ? `<span class="ar-line" lang="ar" dir="rtl">${prov.ar}</span>` : '');
-    return `<h3 class="pk-h"><button class="pk" type="button" id="pk-${i}" aria-controls="pp-${i}" aria-expanded="true"><span class="pk-txt"><span class="pk-t">${t.category}</span><span class="pk-s">${prov[lang]}</span></span>${svg('chev', 'chev')}</button></h3>
-<div class="pp" id="pp-${i}" role="region" aria-labelledby="pk-${i}"><p class="pp-k">${F.penalty}</p><p class="pp-pen">${t.penalty}</p><dl class="pp-f"><dt>${F.act}</dt><dd>${t.act}</dd><dt>${F.provision}</dt><dd>${provText}</dd><dt>${F.register}</dt><dd>${reg}</dd>${onSite}</dl></div>`;
+    // The bar draws the highest amount in pounds the penalty names; beside it, the penalty as the law writes it and its provision.
+    const bar = it.fine ? `<span class="bar" aria-hidden="true"><i style="--v:${(it.fine / topFine).toFixed(4)}"></i></span>` : '';
+    return `<h3 class="pk-h"><button class="pk" type="button" id="pk-${i}" aria-controls="pp-${i}" aria-expanded="true"><span class="pk-txt"><span class="pk-t" id="pk-${i}-t">${t.category}</span>${bar}<span class="pk-pen">${t.penalty}</span><span class="pk-prov">${prov[lang]}</span></span>${svg('chev', 'chev')}</button></h3>
+<div class="pp" id="pp-${i}" role="region" aria-labelledby="pk-${i}-t"><p class="pp-k">${F.act}</p><p class="pp-act">${t.act}</p><dl class="pp-f"><dt>${F.provision}</dt><dd>${provText}</dd><dt>${F.register}</dt><dd>${reg}</dd>${onSite}</dl></div>`;
   }).join('\n');
   return `<div class="wrap wrap-home">
 <h1 class="thesis">${L.thesis}</h1>
-<section aria-labelledby="ledger-h"><h2 id="ledger-h" class="ledger-h">${L.ledgerHeading}</h2><p class="ledger-sub">${L.ledgerSub}</p>
+<section aria-labelledby="ledger-h"><h2 id="ledger-h" class="ledger-h">${L.ledgerHeading}</h2><p class="ledger-sub">${L.ledgerSub} <span class="ledger-cap">${L.fineCaption}</span></p>
 <div class="picker" data-picker style="--n:${ledger.length}">
 ${items}
 </div>
@@ -221,8 +230,7 @@ function articleBody(law, a, lang) {
   const t = law[lang];
   let html = fragment(a.fragment, lang);
   const list = terms(html, lang);
-  const toc = `<details class="toc-m"><summary>${a[lang].heading}<span class="toc-n">${num(list.length, lang)}</span></summary><ol class="toc">${list.map(x => `<li><a href="#${x.id}"${x.shared ? ' class="sh-t"' : ''}>${x.label}</a></li>`).join('')}</ol><p class="toc-key">${L.tocShared}</p></details>`;
-  html = html.replace('<!--toc-->', toc).replace('<!--actions:cite-->', actions('cite', lang));
+  html = html.replace('<!--toc-->', copyMap(a, list, lang)).replace('<!--actions:cite-->', actions('cite', lang));
   return `<header class="wrap law-head">
   ${back(P.law(lang), L.lawHeading)}
   <p class="law-no">${t.country}</p>
@@ -233,6 +241,52 @@ function articleBody(law, a, lang) {
 </header>
 <div class="wrap">
   ${html}
+</div>`;
+}
+
+// Animal Crime Bureau's measurement of an article, one bar per definition: the share
+// of its words that appear word for word in the law it is compared with.
+const share = m => (m === 'whole' ? 1 : Array.isArray(m) ? m[0] / m[1] : 0);
+
+function copyMap(a, list, lang) {
+  if (!list.length) return '';
+  const L = site[lang];
+  if (!a.measure) {
+    const key = list.some(x => x.shared) ? `<p class="cmap-s cmap-key">${L.tocShared}</p>` : '';
+    return `<nav class="cmap" aria-labelledby="cmap-h"><p class="cmap-t" id="cmap-h">${L.toc}</p><ol class="cmap-list cmap-terms">${list.map(x => `<li><a href="#${x.id}"><span class="cmap-term${x.shared ? ' sh-t' : ''}">${x.label}</span></a></li>`).join('')}</ol>${key}</nav>`;
+  }
+  const rows = list.map(x => {
+    const m = a.measure[x.id];
+    const v = share(m);
+    let label = L.cmapNone;
+    if (m === 'whole') label = L.cmapWhole;
+    else if (Array.isArray(m)) {
+      const [shared, total] = m;
+      label = shared === total
+        ? fill(L.cmapAll, { t: num(total, lang) })
+        : fill(L.cmapOf, { s: num(shared, lang), t: num(total, lang), w: arWords(shared) });
+    }
+    return `<li><a href="#${x.id}"><span class="cmap-term">${x.label}</span><span class="bar bar-m" aria-hidden="true">${v ? `<i style="--v:${v.toFixed(4)}"></i>` : ''}</span><span class="cmap-val">${label}</span></a></li>`;
+  }).join('');
+  return `<figure class="cmap" aria-labelledby="cmap-h"><figcaption><span class="cmap-t" id="cmap-h">${L.cmapHeading}</span><span class="cmap-s">${L.cmapNote}</span></figcaption><ol class="cmap-list">${rows}</ol></figure>`;
+}
+
+function supportBody(lang) {
+  const L = site[lang];
+  const work = [
+    [P.law(lang), L.nav.law, L.lawIntro],
+    [P.register(lang), L.nav.register, brandIn(L.registerDescription, lang)],
+    [P.publications(lang), L.nav.publications, L.publicationsIntro],
+  ].map(([href, title, text]) => `<li><a class="work-link" href="${href}"><span class="work-t">${title}</span><span class="work-s">${text}</span>${svg('next', 'go')}</a></li>`).join('');
+  const email = `<a href="mailto:${site.email}"${lang === 'ar' ? ' lang="en"' : ''}>${site.email}</a>`;
+  const mailto = `mailto:${site.email}?subject=${encodeURIComponent(strip(L.supportSubject))}`;
+  return `<div class="wrap"><h1 class="page-h">${L.supportHeading}</h1>
+<p class="prose lead">${L.thesis}</p>
+<p class="prose">${brandIn(L.aboutDescription, lang)}</p>
+<section class="ask" aria-labelledby="ask-h"><h2 class="sec" id="ask-h">${L.supportContactHeading}</h2><p class="prose">${fill(L.supportContact, { email })}</p><p><a class="btn" href="${mailto}">${L.supportWrite.replace(site.name, latin(site.name, lang))}</a></p></section>
+<h2 class="sec">${L.supportWork}</h2><ul class="works">${work}</ul>
+<h2 class="sec">${L.supportStandards}</h2>${fragment('standards', lang)}
+<h2 class="sec">${L.followHeading}</h2><p class="prose">${L.follow}: <a href="${site.subscribeUrl}" hreflang="en">${L.subscribe}</a></p>
 </div>`;
 }
 
@@ -318,7 +372,7 @@ function aboutBody(lang) {
 <p class="prose lead">${L.tagline}</p>
 
 <div class="about-body">
-${fragment('about', lang)}
+${fragment('about', lang).replace('<!--standards-->', fragment('standards', lang))}
 <h2 class="sec" id="app">${L.appHeading}</h2><p class="prose">${L.appText}</p><ul class="plain steps">${L.appSteps.map(x => `<li>${x}</li>`).join('')}</ul><p><button class="install" type="button" hidden>${svg('install')}${L.install}</button></p>
 </div></div></div>`;
 }
@@ -454,16 +508,20 @@ function layout(pg) {
     ? cls => `<a class="lang${cls}" href="${pg.alt}" lang="${o}" hreflang="${o}">${cls ? svg('globe') : ''}${site[o].langName}</a>`
     : () => '';
   const install = `<button class="install" type="button" hidden>${svg('install')}${L.install}</button>`;
+  const onSupport = pg.path === P.support(lang) ? ' aria-current="page"' : '';
+  const next = pg.next
+    ? `<div class="wrap"><nav class="next" aria-label="${L.next}"><a href="${pg.next.path}"><span class="next-k">${L.next}</span><span class="next-t">${pg.next.title}</span><span class="next-s">${pg.next.text}</span>${svg('next', 'go')}</a></nav></div>`
+    : '';
   const contact = `<p><a href="mailto:${site.email}"${lang === 'ar' ? ' lang="en"' : ''}>${site.email}</a></p><p class="links">${site.social.map(s => `<a href="${s.url}"${lang === 'ar' ? ' lang="en"' : ''}>${s.name}</a>`).join('')}</p>`;
 
   return `<!doctype html>
 <!-- Generated by tools/build.mjs from src/. Edit the source and build again; changes made here are lost. -->
 <html lang="${lang}"${lang === 'ar' ? ' dir="rtl"' : ''}><head>${head}</head><body><a class="skip" href="#main">${L.skip}</a>
 <div class="app">
-<header class="top"><a class="brand" href="${P.home(lang)}"><img src="/assets/img/acb-logo.svg" width="27" height="26" alt="">${brandName(lang)}</a>${langLink('')}</header>
-<header class="side"><a class="brand" href="${P.home(lang)}"><img src="/assets/img/acb-logo.svg" width="27" height="26" alt="">${brandName(lang)}</a>${langLink(' lang-side')}${sideNav(pg)}<div class="side-foot">${install}</div></header>
-<main id="main"${pg.cls ? ` class="${pg.cls}"` : ''}>${pg.noindex ? '' : `<p class="print-src">${latin(site.name, lang)}${dot(lang)}${latin(url, lang)}</p>`}${pg.body}</main>
-<footer class="foot"><div class="wrap"><p class="foot-brand"${lang === 'ar' ? ' lang="en"' : ''}>${site.name}</p><p>${L.tagline}</p>${contact}<p class="foot-install">${install}</p></div></footer>
+<header class="top"><a class="brand" href="${P.home(lang)}"><img src="/assets/img/acb-logo.svg" width="27" height="26" alt="">${brandName(lang)}</a><span class="top-end"><a class="top-cta" href="${P.support(lang)}"${onSupport}>${L.supportShort}</a>${langLink('')}</span></header>
+<header class="side"><a class="brand" href="${P.home(lang)}"><img src="/assets/img/acb-logo.svg" width="27" height="26" alt="">${brandName(lang)}</a>${langLink(' lang-side')}${sideNav(pg)}<a class="cta" href="${P.support(lang)}"${onSupport}>${L.support}${svg('next', 'go')}</a><div class="side-foot">${install}</div></header>
+<main id="main"${pg.cls ? ` class="${pg.cls}"` : ''}>${pg.noindex ? '' : `<p class="print-src">${latin(site.name, lang)}${dot(lang)}${latin(url, lang)}</p>`}${pg.body}${next}</main>
+<footer class="foot"><div class="wrap"><p class="foot-brand"${lang === 'ar' ? ' lang="en"' : ''}>${site.name}</p><p>${L.tagline}</p>${contact}<p class="foot-more"><a href="${P.support(lang)}">${L.support}</a><a href="${site.subscribeUrl}" hreflang="en">${L.follow}</a></p><p class="foot-install">${install}</p></div></footer>
 </div>
 ${tabBar(pg)}
 </body></html>
@@ -539,7 +597,74 @@ function validate() {
     both(it, ['category', 'act', 'penalty'], where);
   }
   for (const [key, prov] of Object.entries(provisions)) need(prov.en?.trim() && prov.ar?.trim(), `provisions.json, ${key}: needs English and Arabic`);
+  // A bar may only draw an amount the published penalty states: EGP 200, or EGP 10,000 to 500,000,
+  // and the Arabic penalty must name the same amounts: ٢٠٠ جنيه, or ١٠٬٠٠٠ إلى ٥٠٠٬٠٠٠ جنيه.
+  const pounds = (text, pattern) => [...String(text).matchAll(pattern)].flatMap(m => m.slice(1).filter(Boolean))
+    .map(x => Number(x.replace(/[,\u066C]/g, '').replace(/[٠-٩]/g, d => AR_DIGITS.indexOf(d))));
+  for (const it of ledger) {
+    const where = `ledger.json, ${it.en?.category || 'an entry'}`;
+    const stated = pounds(it.en?.penalty, /EGP (\d[\d,]*)(?: to (\d[\d,]*))?/g);
+    const statedAr = pounds(it.ar?.penalty, /([٠-٩][٠-٩\u066C]*)(?: إلى ([٠-٩][٠-٩\u066C]*))? جنيه/g);
+    need(stated.join() === statedAr.join(), `${where}: the amounts in pounds differ between the English penalty (${stated.join(', ') || 'none'}) and the Arabic (${statedAr.join(', ') || 'none'})`);
+    if (it.fine === undefined) {
+      need(!stated.length, `${where}: the penalty names an amount but "fine" is not set`);
+    } else {
+      need(Number.isInteger(it.fine) && it.fine > 0, `${where}: "fine" should be a whole number of pounds`);
+      need(stated.length && Math.max(...stated) === it.fine, `${where}: "fine" ${it.fine} is not the highest amount in pounds in the penalty`);
+    }
+  }
+  // The copy map may only draw what the article's own notes state.
+  for (const law of laws) {
+    for (const a of law.articles) {
+      if (!a.measure) continue;
+      const where = `laws.json, ${law.id} article ${a.n}`;
+      for (const lang of LANGS) {
+        const html = fragment(a.fragment, lang);
+        for (const x of terms(html, lang)) {
+          const m = a.measure[x.id];
+          const note = (html.match(new RegExp(`id="n${x.id.slice(1)}"[^>]*>(.*?)</div>`, 's')) || [])[1] || '';
+          // The definition in Arabic, after its term: the words the red line marks are the words shared.
+          const text = ((html.match(new RegExp(`id="${x.id}"><p class="ar"[^>]*>(.*?)</p>`, 's')) || [])[1] || '').replace(/^<b>.*?<\/b>/s, '');
+          const underlined = [...text.matchAll(/<span class="sh">(.*?)<\/span>/gs)].reduce((n, u) => n + strip(u[1]).split(' ').length, 0);
+          need(m !== undefined, `${where}: no measure for ${x.id}`);
+          need((m !== 0) === x.shared, `${where}: ${x.id} is ${m === 0 ? 'measured as sharing nothing but is underlined' : 'measured as shared but not underlined'} in the ${lang} text`);
+          if (Array.isArray(m)) {
+            const [shared, total] = m;
+            need(shared > 0 && shared <= total, `${where}: ${x.id} cannot share ${shared} of ${total} words`);
+            need(underlined === shared, `${where}: ${x.id} shares ${shared} words but the ${lang} text underlines ${underlined}`);
+            const phrase = lang === 'en'
+              ? (shared === total ? `all ${total} words` : `${shared} of its ${total} words`)
+              : (shared === total ? `الـ${num(total, 'ar')} كلها` : `${num(shared, 'ar')} ${arWords(shared)} من أصل ${num(total, 'ar')}`);
+            need(note.includes(phrase), `${where}: the ${lang} note of ${x.id} does not say "${phrase}"`);
+          } else if (m === 0) {
+            need(note.includes(lang === 'en' ? 'Shares no run of five words' : 'لا يشترك'), `${where}: ${x.id} is measured as sharing nothing but its ${lang} note says otherwise`);
+          } else {
+            need(m === 'whole', `${where}: ${x.id} has a measure that is neither a count, 0 nor "whole"`);
+            need(/^\s*<span class="sh">[^<]+<\/span>[\s.،]*$/.test(text), `${where}: ${x.id} is measured as whole but its ${lang} text is not underlined from end to end`);
+            // A note that counts the words is drawn from its count, [shared, total], not as a whole definition.
+            need(!(lang === 'en' ? /\bof its \d+ words|\ball \d+ words/ : /من أصل|كلها/).test(note), `${where}: the ${lang} note of ${x.id} counts its words; measure it as [shared, total]`);
+          }
+        }
+      }
+    }
+  }
   if (errors.length) throw new Error(`The sources need fixing before the site can be built:\n- ${errors.join('\n- ')}`);
+}
+
+function nextKey(key) {
+  const [kind, id] = key.split(/:(.*)/s);
+  const firstArticle = `article:${laws[0].id}/${laws[0].articles[0].n}`;
+  if (kind === 'home' || kind === 'law') return firstArticle;
+  if (kind === 'article') return 'register';
+  if (kind === 'register') return records.length ? `record:${records[0].id}` : 'publications';
+  if (kind === 'record') return 'publications';
+  if (kind === 'publications') return publications.length ? `publication:${publications[0].slug}` : 'support';
+  if (kind === 'publication') {
+    const i = publications.findIndex(p => p.slug === id);
+    return publications[i + 1] ? `publication:${publications[i + 1].slug}` : 'support';
+  }
+  if (kind === 'about') return 'support';
+  return null;
 }
 
 export function pages() {
@@ -551,15 +676,16 @@ export function pages() {
     const titled = s => `${strip(s)} | ${site.name}`;
     const home = [L.nav.home, P.home(lang)];
 
+    const start = out.length;
     out.push({
-      lang, section: 'home', path: P.home(lang), alt: P.home(o), cls: 'home',
+      key: 'home', lang, section: 'home', path: P.home(lang), alt: P.home(o), cls: 'home',
       title: site.name, description: L.description, body: homeBody(lang),
       card: { key: 'home', title: L.thesis },
       jsonld: [ORG, { '@type': 'WebSite', name: site.name, url: `${ORIGIN}/`, inLanguage: ['en', 'ar'], publisher: ORG_REF }],
     });
 
     out.push({
-      lang, section: 'law', path: P.law(lang), alt: P.law(o), cls: 'law-index',
+      key: 'law', lang, section: 'law', path: P.law(lang), alt: P.law(o), cls: 'law-index',
       title: titled(L.lawHeading), description: strip(L.lawIntro), body: lawIndexBody(lang),
       card: { key: 'law', title: L.lawHeading, sub: L.lawIntro },
       jsonld: [crumbs(lang, [home, [L.nav.law, P.law(lang)]])],
@@ -570,10 +696,11 @@ export function pages() {
         const html = fragment(a.fragment, lang);
         const path = P.article(lang, law, a);
         out.push({
-          lang, section: 'law', path, alt: P.article(o, law, a), cls: 'law',
+          key: `article:${law.id}/${a.n}`, lang, section: 'law', path, alt: P.article(o, law, a), cls: 'law',
+          peek: { title: `${law[lang].number}${comma(lang)}${a[lang].article}`, text: lawSum(a, lang) },
           title: titled(`${a[lang].article}${comma(lang)}${law[lang].title}`),
           description: strip(lawSum(a, lang)), body: articleBody(law, a, lang), terms: terms(html, lang),
-          card: { key: `law-${law.id}-${a.n}`, kicker: `${law[lang].country}${dot(lang)}${law[lang].number}`, title: `${a[lang].article}${comma(lang)}${a[lang].heading}`, sub: lawSum(a, lang) },
+          card: { key: `law-${law.id}-${a.n}`, kicker: `${law[lang].country}${dot(lang)}${law[lang].number}`, title: `${a[lang].article}${comma(lang)}${a[lang].heading}`, sub: lawSum(a, lang), bars: a.measure ? terms(html, lang).map(x => share(a.measure[x.id])) : null },
           jsonld: [
             {
               '@type': 'WebPage', name: strip(`${a[lang].article}${comma(lang)}${law[lang].title}`), url: ORIGIN + path, inLanguage: lang, publisher: ORG_REF,
@@ -586,7 +713,8 @@ export function pages() {
     }
 
     out.push({
-      lang, section: 'register', path: P.register(lang), alt: P.register(o), cls: 'register',
+      key: 'register', lang, section: 'register', path: P.register(lang), alt: P.register(o), cls: 'register',
+      peek: { title: L.registerHeading, text: brandIn(L.registerDescription, lang) },
       title: titled(L.registerHeading), description: L.registerDescription, body: registerBody(lang),
       card: { key: 'register', title: L.registerHeading, sub: L.registerDescription },
       jsonld: [
@@ -605,7 +733,8 @@ export function pages() {
     for (const r of records) {
       const path = P.record(lang, r);
       out.push({
-        lang, section: 'register', path, alt: P.record(o, r), cls: 'record', ogType: 'article',
+        key: `record:${r.id}`, lang, section: 'register', path, alt: P.record(o, r), cls: 'record', ogType: 'article',
+        peek: { title: ref(r.id, lang), text: r[lang].summary },
         title: `${r.id} | ${strip(L.registerHeading)} | ${site.name}`, description: strip(r[lang].text), body: recordBody(r, lang),
         card: { key: `register-${slugOf(r.id).toLowerCase()}`, kicker: L.registerHeading, title: r.id, sub: r[lang].summary },
         jsonld: [crumbs(lang, [home, [L.nav.register, P.register(lang)], [r.id, path]])],
@@ -613,7 +742,8 @@ export function pages() {
     }
 
     out.push({
-      lang, section: 'publications', path: P.publications(lang), alt: P.publications(o), cls: 'pubs-page',
+      key: 'publications', lang, section: 'publications', path: P.publications(lang), alt: P.publications(o), cls: 'pubs-page',
+      peek: { title: L.publicationsHeading, text: L.publicationsIntro },
       title: titled(L.publicationsHeading), description: strip(L.publicationsIntro), body: publicationsBody(lang),
       card: { key: 'publications', title: L.publicationsHeading, sub: L.publicationsIntro },
       jsonld: [crumbs(lang, [home, [L.nav.publications, P.publications(lang)]])],
@@ -628,7 +758,8 @@ export function pages() {
         ['citation_language', p.language], ['citation_fulltext_html_url', p.url], ['citation_abstract_html_url', ORIGIN + path],
       ].map(([n, c]) => `<meta name="${n}" content="${esc(c)}">`).join('');
       out.push({
-        lang, section: 'publications', path, alt: P.publication(o, p), cls: 'pub-detail', ogType: 'article',
+        key: `publication:${p.slug}`, lang, section: 'publications', path, alt: P.publication(o, p), cls: 'pub-detail', ogType: 'article',
+        peek: { title: latin(p.title, lang), text: latin(p.subtitle, lang) },
         title: titled(p.title), ogTitle: full, description: `${strip(seriesLine(p, lang))}. ${p.subtitle}`, body: publicationBody(p, lang),
         headExtra: meta,
         card: { key: `publication-${p.slug}`, kicker: `${p[lang].series}${dot(lang)}${p.ref}`, title: p.title, sub: p.subtitle, latinTitle: true },
@@ -643,11 +774,27 @@ export function pages() {
     }
 
     out.push({
-      lang, section: 'about', path: P.about(lang), alt: P.about(o), cls: 'about',
+      key: 'about', lang, section: 'about', path: P.about(lang), alt: P.about(o), cls: 'about',
       title: titled(L.aboutHeading), description: strip(L.aboutDescription), body: aboutBody(lang),
       card: { key: 'about', title: L.aboutHeading, sub: L.tagline },
       jsonld: [ORG, crumbs(lang, [home, [L.nav.about, P.about(lang)]])],
     });
+
+    out.push({
+      key: 'support', lang, section: 'support', path: P.support(lang), alt: P.support(o), cls: 'support',
+      peek: { title: L.supportHeading, text: fill(L.supportContact, { email: latin(site.email, lang) }) },
+      title: titled(L.supportHeading), description: strip(L.supportDescription), body: supportBody(lang),
+      card: { key: 'support', title: L.supportHeading, sub: L.thesis },
+      jsonld: [ORG, crumbs(lang, [home, [L.supportHeading, P.support(lang)]])],
+    });
+
+    // Every page ends on the one page that carries the story on: the law, what happens
+    // under it, what Animal Crime Bureau found, and how to support the work.
+    const byKey = Object.fromEntries(out.slice(start).map(pg => [pg.key, pg]));
+    for (const pg of out.slice(start)) {
+      const target = byKey[nextKey(pg.key)];
+      if (target) pg.next = { path: target.path, ...target.peek };
+    }
   }
 
   out.push({
@@ -743,11 +890,14 @@ function serviceWorker(all) {
     ...CORE_FONTS.map(f => `/assets/fonts/${f}.woff2`),
   ];
   const pagesList = all.filter(p => p.path !== '/404.html').map(p => p.path);
+  // The first part of every page's address: '' for the home page, then ar, law, register and so on.
+  const sections = [...new Set(pagesList.map(p => p.split('/')[1]))];
   const version = hash([read('assets/site.css'), read('assets/site.js'), ...all.map(p => p.html)].join('\n'));
   return read('tools/sw.template.js')
     .replace('__VERSION__', version)
     .replace('__PAGES__', JSON.stringify(pagesList))
-    .replace('__ASSETS__', JSON.stringify(assets));
+    .replace('__ASSETS__', JSON.stringify(assets))
+    .replace('__SECTIONS__', JSON.stringify(sections));
 }
 
 function sitemap(all) {
