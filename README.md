@@ -159,5 +159,5 @@ self.addEventListener('activate', event => event.waitUntil(
 - Red marks only Animal Crime Bureau's measurement.
 - Every legal statement cites the published text of the law.
 - Record numbers are never changed or reused.
-- Images in `assets/img` that no page uses are kept on purpose. Do not link,
-  cache or delete them without asking.
+- A record's photographs and other files are added only when the record is
+  published, never before.
