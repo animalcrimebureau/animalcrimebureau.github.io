@@ -282,10 +282,14 @@ function supportBody(lang) {
   ].map(([href, title, text]) => `<li><a class="work-link" href="${href}"><span class="work-t">${title}</span><span class="work-s">${text}</span>${svg('next', 'go')}</a></li>`).join('');
   const email = `<a href="mailto:${site.email}"${lang === 'ar' ? ' lang="en"' : ''}>${site.email}</a>`;
   const mailto = `mailto:${site.email}?subject=${encodeURIComponent(strip(L.supportSubject))}`;
+  // Donations, once the campaign is live: a plain link, so nothing is loaded from the platform.
+  const donate = site.donateUrl
+    ? `<section class="ask" aria-labelledby="donate-h"><h2 class="sec" id="donate-h">${L.donateHeading}</h2><p class="prose">${L.donateText}</p><p><a class="btn" href="${esc(site.donateUrl)}" hreflang="en">${L.donateButton.replace('GoFundMe', latin('GoFundMe', lang))}${svg('ext', 'ext')}</a></p></section>`
+    : '';
   return `<div class="wrap"><h1 class="page-h">${L.supportHeading}</h1>
 <p class="prose lead">${L.thesis}</p>
 <p class="prose">${brandIn(L.aboutDescription, lang)}</p>
-<section class="ask" aria-labelledby="ask-h"><h2 class="sec" id="ask-h">${L.supportContactHeading}</h2><p class="prose">${fill(L.supportContact, { email })}</p><p><a class="btn" href="${mailto}">${L.supportWrite.replace(site.name, latin(site.name, lang))}</a></p></section>
+${donate}<section class="ask" aria-labelledby="ask-h"><h2 class="sec" id="ask-h">${L.supportContactHeading}</h2><p class="prose">${fill(L.supportContact, { email })}</p><p><a class="btn" href="${mailto}">${L.supportWrite.replace(site.name, latin(site.name, lang))}</a></p></section>
 <h2 class="sec">${L.supportWork}</h2><ul class="works">${work}</ul>
 <h2 class="sec">${L.supportStandards}</h2>${fragment('standards', lang)}
 <h2 class="sec">${L.followHeading}</h2><p class="prose">${L.follow}: <a href="${site.subscribeUrl}" hreflang="en">${L.subscribe}</a></p>
@@ -599,6 +603,7 @@ function validate() {
     both(it, ['category', 'act', 'penalty'], where);
   }
   for (const [key, prov] of Object.entries(provisions)) need(prov.en?.trim() && prov.ar?.trim(), `provisions.json, ${key}: needs English and Arabic`);
+  need(!site.donateUrl || /^https:\/\/[^\s"<>]+$/.test(site.donateUrl), `site.json: "donateUrl" should be the campaign's full address, starting with https://`);
   // A bar may only draw an amount the published penalty states: EGP 200, or EGP 10,000 to 500,000,
   // and the Arabic penalty must name the same amounts: ٢٠٠ جنيه, or ١٠٬٠٠٠ إلى ٥٠٠٬٠٠٠ جنيه.
   const pounds = (text, pattern) => [...String(text).matchAll(pattern)].flatMap(m => m.slice(1).filter(Boolean))

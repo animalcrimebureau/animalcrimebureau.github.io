@@ -12,7 +12,7 @@ import { readFileSync } from 'node:fs';
 import { readFile, stat } from 'node:fs/promises';
 import { createRequire } from 'node:module';
 import { extname, join, normalize } from 'node:path';
-import { ROOT, pages } from './build.mjs';
+import { ROOT, pages, site } from './build.mjs';
 
 const require = createRequire(import.meta.url);
 const { chromium } = require('playwright');
@@ -108,7 +108,13 @@ try {
 
   await page.goto(`${base}/support/`, { waitUntil: 'networkidle' });
   check(await page.$eval('.side .cta', a => a.getAttribute('aria-current') === 'page'), 'support: the sidebar marks the page');
-  check(await page.$eval('.ask .btn', a => a.href.startsWith('mailto:info@animalcrimebureau.org?subject=')), 'support: the button opens an email to Animal Crime Bureau');
+  check(await page.$eval('#ask-h ~ p .btn', a => a.href.startsWith('mailto:info@animalcrimebureau.org?subject=')), 'support: the button opens an email to Animal Crime Bureau');
+  if (site.donateUrl) {
+    for (const path of ['/support/', '/ar/support/']) {
+      await page.goto(base + path, { waitUntil: 'networkidle' });
+      check(await page.$eval('#donate-h ~ p .btn', (a, url) => a.href === url, site.donateUrl).catch(() => false), `support: the Donate button leads to the campaign on ${path}`);
+    }
+  }
   // Page by page, the home page leads to the Support page, which ends the way, and no page comes round twice.
   for (const [start, end] of [['/', '/support/'], ['/ar/', '/ar/support/']]) {
     const walked = [];

@@ -143,6 +143,9 @@
     "supportHeading": "Support this work",
     "supportWork": "The work",
     "supportStandards": "Standards",
+    "donateHeading": "Donate",
+    "donateText": "Donations to Animal Crime Bureau are collected on GoFundMe.",
+    "donateButton": "Donate on GoFundMe",
     "supportContactHeading": "Fund or partner",
     "supportContact": "To fund Animal Crime Bureau or work with it, write to {email}.",
     "supportWrite": "Write to Animal Crime Bureau",
@@ -284,6 +287,9 @@
     "supportHeading": "ادعم هذا العمل",
     "supportWork": "العمل",
     "supportStandards": "المعايير",
+    "donateHeading": "التبرع",
+    "donateText": "تُجمع تبرعات <bdi lang=\"en\">Animal Crime Bureau</bdi> عبر <bdi lang=\"en\">GoFundMe</bdi>.",
+    "donateButton": "تبرّع عبر GoFundMe",
     "supportContactHeading": "التمويل والشراكة",
     "supportContact": "لتمويل <bdi lang=\"en\">Animal Crime Bureau</bdi> أو العمل معها، يُرجى الكتابة إلى {email}.",
     "supportWrite": "الكتابة إلى Animal Crime Bureau",
@@ -293,5 +299,6 @@
     "subscribe": "اشترك",
     "supportDescription": "توثّق Animal Crime Bureau الجرائم الواقعة على الحيوانات وتقيس تطبيق القانون بالمعيار الذي يحيل إليه القانون نفسه. لتمويلها أو العمل معها، يُرجى الكتابة إلى info@animalcrimebureau.org."
   },
-  "subscribeUrl": "https://animalcrimebureau.substack.com/subscribe"
+  "subscribeUrl": "https://animalcrimebureau.substack.com/subscribe",
+  "donateUrl": ""
 }

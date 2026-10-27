@@ -93,6 +93,11 @@ different amounts, and a measurement that differs from the article's notes or
 from the words its red line marks, so a bar never draws what the text does not
 say.
 
+**Add the donation link.** When the campaign is live, put its full address in
+`donateUrl` in `src/data/site.json` and build: the Support page then shows a
+Donate button in both languages. It is a plain link, so the pages still load
+nothing from another site.
+
 **Record a correction.** Never change a published text silently. Add the
 correction, with its date and both languages, to the record or publication it
 amends:
