@@ -211,17 +211,22 @@ function homeBody(lang) {
     return `<h3 class="pk-h"><button class="pk" type="button" id="pk-${i}" aria-controls="pp-${i}" aria-expanded="true"><span class="pk-txt"><span class="pk-t" id="pk-${i}-t">${t.category}</span>${bar}<span class="pk-pen">${t.penalty}</span><span class="pk-prov">${prov[lang]}</span></span>${svg('chev', 'chev')}</button></h3>
 <div class="pp" id="pp-${i}" role="region" aria-labelledby="pk-${i}-t"><p class="pp-k">${F.act}</p><p class="pp-act">${t.act}</p><dl class="pp-f"><dt>${F.provision}</dt><dd>${provText}</dd><dt>${F.register}</dt><dd>${reg}</dd>${onSite}</dl></div>`;
   }).join('\n');
+  // A change to the ledger's wording is dated and recorded on the page, like a correction to a publication.
+  const changes = site.ledgerCorrections || [];
+  const fix = amendments(changes, L.publicationCorrections, lang);
+  const amended = changes.length ? ` <a href="#corr-h">${fill(L.amended, { date: formatDate(changes[changes.length - 1].date, lang) })}</a>.` : '';
   return `<div class="wrap wrap-home">
 <h1 class="thesis">${L.thesis}</h1>
 <section aria-labelledby="ledger-h"><h2 id="ledger-h" class="ledger-h">${L.ledgerHeading}</h2><p class="ledger-sub">${L.ledgerSub} <span class="ledger-cap">${L.fineCaption}</span></p>
 <div class="picker" data-picker style="--n:${ledger.length}">
 ${items}
 </div>
-<p class="ledger-note">${L.ledgerNote}</p></section>
+<p class="ledger-note">${L.ledgerNote}${amended}</p></section>
 <div class="latest">
 <section aria-labelledby="latest-pub-h"><h2 id="latest-pub-h" class="latest-label">${L.latestPublication}</h2><ul class="pubs">${pubItem(publications[0], lang)}</ul></section>
 <section aria-labelledby="latest-rec-h"><h2 id="latest-rec-h" class="latest-label">${L.latestRecord}</h2><ul class="records">${recordItem(records[0], lang)}</ul></section>
 </div>
+${fix.block}
 </div>`;
 }
 
@@ -383,7 +388,7 @@ function supportBody(lang) {
   // Donations, while the campaign is live: what it is for, the button, what the money covers and who
   // collects it, in the campaign's own words. A plain link, so nothing is loaded from the platform.
   const donate = site.donateUrl
-    ? `<section class="ask" aria-labelledby="donate-h"><h2 class="sec" id="donate-h">${L.donateHeading}</h2><p class="prose">${L.donateText}</p><p><a class="btn" href="${esc(site.donateUrl)}" hreflang="en"><span>${L.donateButton.replace('GoFundMe', latin('GoFundMe', lang))}</span>${svg('ext', 'ext')}</a></p><p class="prose covers-h">${L.donateCovers}</p><ul class="covers">${L.donateItems.map(x => `<li>${x}</li>`).join('')}</ul><p class="prose">${L.donateHow}</p></section>`
+    ? `<section class="ask" aria-labelledby="donate-h"><h2 class="sec" id="donate-h">${L.donateHeading}</h2><p class="prose">${L.donateText}</p><p><a class="btn" href="${esc(site.donateUrl)}" hreflang="en"><span>${L.donateButton.replace('GoFundMe', latin('GoFundMe', lang))}</span>${svg('ext', 'ext')}</a></p><p class="prose dashes-h">${L.donateCovers}</p><ul class="dashes">${L.donateItems.map(x => `<li>${x}</li>`).join('')}</ul><p class="prose">${L.donateHow}</p></section>`
     : '';
   return `<div class="wrap"><h1 class="page-h">${L.supportHeading}</h1>
 <p class="prose lead">${L.thesis}</p>
@@ -397,11 +402,13 @@ ${donate}<section class="ask" aria-labelledby="ask-h"><h2 class="sec" id="ask-h"
 function registerBody(lang) {
   const L = site[lang];
   const files = `<a href="${DATA_CSV}" download${lang === 'ar' ? ' lang="en"' : ''}>CSV</a>${dot(lang)}<a href="${DATA_JSON}" download${lang === 'ar' ? ' lang="en"' : ''}>JSON</a>`;
+  const email = `<a href="mailto:${site.email}?subject=${encodeURIComponent(L.reportSubject)}"${lang === 'ar' ? ' lang="en"' : ''}>${site.email}</a>`;
   return `<div class="wrap">
 <h1 class="page-h">${L.registerHeading}</h1>
 ${fragment('register-intro', lang)}
 <h2 class="sec">${L.recordsHeading}</h2><ul class="records">${records.map(r => recordItem(r, lang)).join('')}</ul>
 ${fragment('register-method', lang)}
+<section aria-labelledby="report-h"><h2 class="sec" id="report-h">${L.reportHeading}</h2><p class="prose dashes-h">${fill(L.reportText, { email })}</p><ul class="dashes">${L.reportItems.map(x => `<li>${x}</li>`).join('')}</ul><p class="prose">${L.reportFiles}</p><p class="prose">${L.reportNote}</p></section>
 <h2 class="sec">${L.dataHeading}</h2><p class="prose">${L.dataText} ${files}</p><p class="prose">${L.dataLicence}</p>
 <p class="updated">${L.registerUpdated}</p>
 </div>`;
@@ -489,6 +496,8 @@ function aboutBody(lang) {
 <div class="about-body">
 ${fragment('about', lang).replace('<!--standards-->', fragment('standards', lang))}
 <h2 class="sec" id="app">${L.appHeading}</h2><p class="prose">${L.appText}</p><ul class="plain steps">${L.appSteps.map(x => `<li>${x}</li>`).join('')}</ul><p><button class="install" type="button" hidden>${svg('install')}${L.install}</button></p>
+<h2 class="sec" id="privacy">${L.privacyHeading}</h2><p class="prose">${L.privacyText}</p>
+<h2 class="sec" id="accessibility">${L.accessHeading}</h2><p class="prose">${fill(L.accessText, { email: `<a href="mailto:${site.email}"${lang === 'ar' ? ' lang="en"' : ''}>${site.email}</a>` })}</p>
 </div></div></div>`;
 }
 
@@ -640,7 +649,7 @@ function layout(pg) {
 <header class="top"><a class="brand" href="${P.home(lang)}"><img src="/assets/img/acb-logo.svg" width="27" height="26" alt="">${brandName(lang)}</a><span class="top-end"><a class="top-cta${give}" href="${P.support(lang)}"${onSupport}>${askShort}</a>${langLink('')}</span></header>
 <header class="side"><a class="brand" href="${P.home(lang)}"><img src="/assets/img/acb-logo.svg" width="27" height="26" alt="">${brandName(lang)}</a>${langLink(' lang-side')}${sideNav(pg)}<a class="cta${give}" href="${P.support(lang)}"${onSupport}>${ask}${svg('next', 'go')}</a><div class="side-foot">${install}</div></header>
 <main id="main"${pg.cls ? ` class="${pg.cls}"` : ''}>${pg.noindex ? '' : `<p class="print-src">${latin(site.name, lang)}${dot(lang)}${latin(url, lang)}</p>`}${pg.body}${next}</main>
-<footer class="foot"><div class="wrap"><p class="foot-brand"${lang === 'ar' ? ' lang="en"' : ''}>${site.name}</p><p>${L.tagline}</p>${contact}<p class="foot-more"><a href="${P.support(lang)}">${ask}</a><a href="${site.subscribeUrl}" hreflang="en">${L.follow}</a></p><p class="foot-install">${install}</p></div></footer>
+<footer class="foot"><div class="wrap"><p class="foot-brand"${lang === 'ar' ? ' lang="en"' : ''}>${site.name}</p><p>${L.tagline}</p>${contact}<p class="foot-more"><a href="${P.support(lang)}">${ask}</a><a href="${site.subscribeUrl}" hreflang="en">${L.follow}</a><a href="${P.about(lang)}#privacy">${L.privacyHeading}</a><a href="${P.about(lang)}#accessibility">${L.accessHeading}</a></p><p class="foot-install">${install}</p></div></footer>
 </div>
 ${tabBar(pg)}
 </body></html>
@@ -763,6 +772,12 @@ function validate() {
     both(it, ['category', 'act', 'penalty'], where);
   }
   for (const [key, prov] of Object.entries(provisions)) need(prov.en?.trim() && prov.ar?.trim(), `provisions.json, ${key}: needs English and Arabic`);
+  dated(site.ledgerCorrections, 'site.json, ledgerCorrections');
+  for (const key of ['reportHeading', 'reportText', 'reportFiles', 'reportNote', 'reportSubject', 'privacyHeading', 'privacyText', 'accessHeading', 'accessText']) {
+    need(site.en[key]?.trim() && site.ar[key]?.trim(), `site.json: "${key}" is needed in English and Arabic`);
+  }
+  const asked = [site.en.reportItems, site.ar.reportItems].map(list => (Array.isArray(list) ? list.filter(x => String(x).trim()).length : 0));
+  need(asked[0] > 0 && asked[0] === asked[1], `site.json: "reportItems" lists ${asked[0]} things in English and ${asked[1]} in Arabic`);
   need(!site.donateUrl || /^https:\/\/[^\s"<>]+$/.test(site.donateUrl), `site.json: "donateUrl" should be the campaign's full address, starting with https://`);
   // The two languages say the same about the campaign: the same texts, and as many things the money covers.
   for (const key of ['donate', 'donateHeading', 'donateText', 'donateButton', 'donateCovers', 'donateHow', 'donateDescription']) {

@@ -138,7 +138,9 @@ the annotated article (in `src/data/laws.json`) it amends:
 ```
 
 The page then shows "Amended 3 November 2026" under its title and the dated list
-below it, and the register's data files carry it.
+below it, and the register's data files carry it. A change to the wording of the
+home ledger is recorded the same way, in `ledgerCorrections` in
+`src/data/site.json`; the home page shows it under the ledger.
 
 ## How a reader moves through the site
 
@@ -147,7 +149,9 @@ under it in the Case Register, what Animal Crime Bureau published, and how to
 support the work. The order is `nextKey` in `tools/build.mjs`. The Support page,
 the button at the foot of the sidebar and the one in the phone's top bar
 are how a funder reaches Animal Crime Bureau; the footer also links to email
-subscription on Substack.
+subscription on Substack. The Case Register page says how to bring an incident
+to Animal Crime Bureau, in the terms of the register itself: change that text
+only with the register's method.
 
 ## Privacy and security
 
@@ -157,6 +161,12 @@ the two lines the build adds, allowed by their hashes. Nothing is fetched from
 another service. The site sets no cookies and has no analytics. Adding anything
 from elsewhere, such as an embedded video or a counter, means changing the
 policy in `tools/build.mjs` on purpose; the test fails otherwise.
+
+The About page tells visitors the same, under Privacy, and says what the site
+is built to under Accessibility; the footer of every page links to both. The
+browser test holds the site to those words: no cookie, nothing kept in the
+browser's storage, no request to another site, and WCAG 2.2 AA on every page.
+If one of them has to change, change the text in `src/data/site.json` first.
 
 ## What the build makes
 

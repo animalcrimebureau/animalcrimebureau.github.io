@@ -123,6 +123,16 @@
     "recordCorrections": "Corrections and new information",
     "publicationCorrections": "Corrections",
     "amended": "Amended {date}",
+    "reportHeading": "Report an incident",
+    "reportText": "To bring an incident to Animal Crime Bureau, write to {email} and say:",
+    "reportItems": ["what happened, and to which animals", "the month and the governorate", "how you know: what you saw yourself, or where it was reported"],
+    "reportFiles": "Send photographs and videos as they were taken, without editing.",
+    "reportNote": "An incident enters the register only after Animal Crime Bureau has documented or verified it. No individual is named.",
+    "reportSubject": "An incident for the Case Register",
+    "privacyHeading": "Privacy",
+    "privacyText": "This site sets no cookies and loads nothing from other sites, and Animal Crime Bureau runs no analytics on it. It is hosted on GitHub Pages, whose servers log the IP addresses of visitors. After a first visit, the site’s pages are saved on your device so that they can be read without a connection; nothing else is stored there. Links that leave this site lead to services with their own privacy policies.",
+    "accessHeading": "Accessibility",
+    "accessText": "This site is built to meet the Web Content Accessibility Guidelines (WCAG) 2.2 at level AA, and every page is checked automatically after each change. If something does not work for you, write to {email}.",
     "appHeading": "The app",
     "appText": "This site can be installed on a phone or a computer as an app. After a first visit, its pages can be read without a connection.",
     "appSteps": [
@@ -324,6 +334,16 @@
     "recordCorrections": "التصحيحات والمعلومات الجديدة",
     "publicationCorrections": "التصحيحات",
     "amended": "عُدّل في {date}",
+    "reportHeading": "الإبلاغ عن واقعة",
+    "reportText": "لإبلاغ <bdi lang=\"en\">Animal Crime Bureau</bdi> بواقعة، يُرجى الكتابة إلى {email} مع ذكر:",
+    "reportItems": ["ما حدث، ولأي حيوانات", "الشهر والمحافظة", "مصدر المعرفة بالواقعة: مشاهدة مباشرة، أو المكان الذي نُشرت فيه"],
+    "reportFiles": "تُرسل الصور ومقاطع الفيديو كما التُقطت، دون تعديل.",
+    "reportNote": "لا تدخل الواقعة السجل إلا بعد أن توثّقها <bdi lang=\"en\">Animal Crime Bureau</bdi> أو تتحقق منها. ولا يُذكر اسم أي شخص.",
+    "reportSubject": "واقعة لسجل الحالات",
+    "privacyHeading": "الخصوصية",
+    "privacyText": "لا يضع هذا الموقع ملفات تعريف الارتباط (الكوكيز) ولا يحمّل شيئًا من مواقع أخرى، ولا تستخدم <bdi lang=\"en\">Animal Crime Bureau</bdi> فيه أدوات لتحليل الزيارات. يستضيفه <bdi lang=\"en\">GitHub Pages</bdi>، وتسجّل خوادمه عناوين <bdi lang=\"en\">IP</bdi> للزوار. وبعد أول زيارة، تُحفظ صفحات الموقع على جهازك حتى يمكن قراءتها دون اتصال، ولا يُخزَّن عليه شيء آخر. والروابط التي تخرج من الموقع تؤدي إلى خدمات لها سياسات خصوصية خاصة بها.",
+    "accessHeading": "إمكانية الوصول",
+    "accessText": "بُني هذا الموقع ليوافق إرشادات إتاحة محتوى الويب <bdi lang=\"en\">(WCAG) 2.2</bdi> عند المستوى <bdi lang=\"en\">AA</bdi>، وتُفحص كل صفحاته آليًا بعد كل تعديل. إذا تعذّر عليك استخدام شيء فيه، يُرجى الكتابة إلى {email}.",
     "appHeading": "التطبيق",
     "appText": "يمكن تثبيت هذا الموقع على الهاتف أو الكمبيوتر كتطبيق. وبعد أول زيارة، يمكن قراءة صفحاته دون اتصال.",
     "appSteps": [
@@ -415,5 +435,12 @@
   },
   "subscribeUrl": "https://animalcrimebureau.substack.com/subscribe",
   "donateUrl": "https://www.gofundme.com/f/a-permanent-base-for-animal-crime-bureau-in-egypt",
+  "ledgerCorrections": [
+    {
+      "date": "2026-11-16",
+      "en": "The ledger now names the animals and the acts as each provision does. Article 357 of the Penal Code covers any domesticated animal not named in Article 355, where the ledger said a dog or a cat, and also punishes causing it serious harm. Article 355 also punishes causing serious harm and poisoning; in English its animals are now given as in the Arabic: riding, draught or pack animals, and livestock. Article 28 of the Environment Law also prohibits hunting, transporting, exporting and importing. No penalty and no article changed.",
+      "ar": "صار الجدول يسمّي الحيوانات والأفعال كما يسمّيها كل نص. المادة ٣٥٧ من قانون العقوبات تشمل أي حيوان مستأنس غير المذكور في المادة ٣٥٥، وكان الجدول يقول «كلب أو قطة»، وتعاقب كذلك على الإضرار به ضررًا كبيرًا. والمادة ٣٥٥ تعاقب كذلك على الإضرار الكبير وعلى التسميم، وصار النص الإنجليزي يسمّي حيواناتها كما يسمّيها العربي: دواب الركوب أو الجر أو الحمل، والمواشي. والمادة ٢٨ من قانون البيئة تحظر كذلك الصيد والنقل والتصدير والاستيراد. لم تتغير أي عقوبة ولا أي مادة."
+    }
+  ],
   "xrayName": "Law X-ray"
 }

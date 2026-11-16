@@ -4,7 +4,8 @@
 // donate, the way from page to page, old record links, copying a citation, the
 // index of definitions, reading offline, installing, the tab bar on a phone,
 // narrow screens and print.
-// It also checks that no page fetches anything from another site and, when
+// It also checks that no page fetches anything from another site, that the site
+// sets no cookie and keeps nothing in the browser but its saved pages and, when
 // axe-core is installed, that every page meets WCAG 2.2 AA.
 // Needs Playwright and its Chromium. Run after building: node tools/test.mjs
 
@@ -130,6 +131,21 @@ try {
     check(!at && walked[walked.length - 1] === end, `next: page by page, ${start} leads to ${end} (${walked.join(' > ')}${at ? ` > ${at}` : ''})`);
   }
 
+  // The Case Register says how to bring an incident, and the footer leads to the privacy and accessibility notes.
+  await page.goto(`${base}/register/`, { waitUntil: 'networkidle' });
+  check(await page.$eval('#report-h ~ p a', a => a.href.startsWith('mailto:info@animalcrimebureau.org?subject=')), 'register: reporting an incident opens an email to Animal Crime Bureau');
+  for (const [path, id] of [['/', 'privacy'], ['/ar/', 'accessibility']]) {
+    await page.goto(base + path, { waitUntil: 'networkidle' });
+    await page.click(`.foot-more a[href$="#${id}"]`);
+    const shown = await page.waitForFunction(want => {
+      const h = document.getElementById(want);
+      if (!h || location.hash !== `#${want}`) return false;
+      const r = h.getBoundingClientRect();
+      return r.top >= 0 && r.bottom <= innerHeight;
+    }, id, { timeout: 4000 }).then(() => true, () => false);
+    check(shown, `footer: the link on ${path} shows the ${id} note on the About page`);
+  }
+
   await page.goto(`${base}/register/#ACB-2026-001`, { waitUntil: 'networkidle' });
   check(page.url().endsWith('/register/ACB-2026-001/'), 'register: an old link to a record opens the record page');
   await page.goto(`${base}/ar/register/#ACB-2026-001`, { waitUntil: 'networkidle' });
@@ -206,6 +222,8 @@ try {
   await page.goto(`${base}/register/ACB-2026-999/`);
   check((await page.textContent('h1')) === 'No connection', 'offline: a page that was never saved says so');
   await wide.setOffline(false);
+  const kept = await page.evaluate(() => localStorage.length + sessionStorage.length);
+  check(!(await wide.cookies()).length && !kept, 'privacy: the site sets no cookie and keeps nothing in the browser but its saved pages');
   await wide.close();
 
   // Phone.

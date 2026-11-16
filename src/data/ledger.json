@@ -18,12 +18,12 @@
     "provision": "env4-28-84",
     "en": {
       "category": "A protected wild animal",
-      "act": "Killing, capturing, possessing or trading it",
+      "act": "Hunting, killing, capturing, possessing, transporting, exporting, importing or trading it",
       "penalty": "Imprisonment and a fine of EGP 5,000 to 50,000, or either, with confiscation in every case"
     },
     "ar": {
       "category": "حيوان بري محمي",
-      "act": "قتله أو إمساكه أو حيازته أو الاتجار فيه",
+      "act": "صيده أو قتله أو إمساكه أو حيازته أو نقله أو تصديره أو استيراده أو الاتجار فيه",
       "penalty": "الحبس وغرامة من ٥٬٠٠٠ إلى ٥٠٬٠٠٠ جنيه أو إحداهما، مع المصادرة في جميع الأحوال"
     },
     "fine": 50000
@@ -31,26 +31,26 @@
   {
     "provision": "penal-355",
     "en": {
-      "category": "A horse, donkey or head of livestock",
-      "act": "Deliberately killing it without necessity",
+      "category": "A riding, draught or pack animal, or livestock",
+      "act": "Deliberately killing it without necessity, causing it serious harm, or poisoning it",
       "penalty": "Imprisonment with labour"
     },
     "ar": {
       "category": "دابة أو ماشية",
-      "act": "قتلها عمدًا بدون مقتضٍ",
+      "act": "قتلها عمدًا بدون مقتضٍ، أو الإضرار بها ضررًا كبيرًا، أو تسميمها",
       "penalty": "الحبس مع الشغل"
     }
   },
   {
     "provision": "penal-357",
     "en": {
-      "category": "A dog or a cat",
-      "act": "Deliberately killing it without necessity, or poisoning it",
+      "category": "Any other domesticated animal, such as a dog or a cat",
+      "act": "Deliberately killing it without necessity, poisoning it, or causing it serious harm",
       "penalty": "Imprisonment of up to six months or a fine of up to EGP 200"
     },
     "ar": {
-      "category": "كلب أو قطة",
-      "act": "قتله عمدًا بدون مقتضٍ، أو تسميمه",
+      "category": "أي حيوان مستأنس آخر، كالكلب أو القطة",
+      "act": "قتله عمدًا بدون مقتضٍ، أو تسميمه، أو الإضرار به ضررًا كبيرًا",
       "penalty": "الحبس مدة لا تزيد على ستة أشهر أو غرامة لا تتجاوز ٢٠٠ جنيه"
     },
     "fine": 200
