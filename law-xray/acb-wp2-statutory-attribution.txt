@@ -1,0 +1,50 @@
+# Animal Crime Bureau, Working Paper No. 2, ACB/WP/002
+# Statutory attribution: the text-reuse measure used in the paper.
+# Input: a JSON file with the provisions of each law (see acb-wp2-texts.json).
+# Output: for each pair of laws, the share of the later law's five-word
+# sequences found in the earlier law, and the longest shared run of words.
+import json, re, sys
+
+def normalize(text):
+    """Remove vowel marks, the elongation mark and punctuation; unify letter forms."""
+    text = re.sub(r'[\u064B-\u0652\u0670\u0640]', '', text)
+    text = re.sub(r'[إأآٱ]', 'ا', text)
+    text = text.replace('ى', 'ي').replace('ة', 'ه').replace('ؤ', 'و').replace('ئ', 'ي')
+    text = re.sub(r'[^\u0621-\u064A\s]', ' ', text)
+    return re.sub(r'\s+', ' ', text).strip().split()
+
+def sequences(words, n):
+    return set(tuple(words[i:i + n]) for i in range(len(words) - n + 1))
+
+def shared_share(later, earlier, n=5):
+    """Share of the later text's distinct n-word sequences that appear in the earlier text."""
+    a, b = sequences(normalize(later), n), sequences(normalize(earlier), n)
+    return len(a & b) / len(a) if a else None
+
+def longest_run(x, y):
+    """Longest run of consecutive words that two texts share."""
+    wx, wy = normalize(x), normalize(y)
+    best, prev = 0, [0] * (len(wy) + 1)
+    for i in range(1, len(wx) + 1):
+        cur = [0] * (len(wy) + 1)
+        for j in range(1, len(wy) + 1):
+            if wx[i - 1] == wy[j - 1]:
+                cur[j] = prev[j - 1] + 1
+                best = max(best, cur[j])
+        prev = cur
+    return best
+
+if __name__ == '__main__':
+    data = json.load(open(sys.argv[1] if len(sys.argv) > 1 else 'acb-wp2-texts.json', encoding='utf-8'))
+    laws, order = data['laws'], data['order']
+    provisions = data['provisions']
+    whole = {k: ' '.join(laws[k].get(p, '') for p in provisions) for k in order}
+    for i, later in enumerate(order):
+        for earlier in order[:i]:
+            print(f"{later} from {earlier}: five-word {shared_share(whole[later], whole[earlier], 5):.0%}, "
+                  f"three-word {shared_share(whole[later], whole[earlier], 3):.0%}, "
+                  f"longest run {longest_run(whole[later], whole[earlier])} words")
+            for p in provisions:
+                a, b = laws[later].get(p, ''), laws[earlier].get(p, '')
+                if a and b:
+                    print(f"    {p}: {shared_share(a, b):.0%}")
