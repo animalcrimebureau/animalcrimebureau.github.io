@@ -1,8 +1,9 @@
 #!/usr/bin/env node
 // Opens the built site in a browser and uses it as a reader would: the ledger
-// on the home page, the copy map, Law X-ray, a publication's files, the way from
-// page to page, old record links, copying a citation, the index of definitions,
-// reading offline, installing, the tab bar on a phone, narrow screens and print.
+// on the home page, the copy map, Law X-ray, a publication's files, the way to
+// donate, the way from page to page, old record links, copying a citation, the
+// index of definitions, reading offline, installing, the tab bar on a phone,
+// narrow screens and print.
 // It also checks that no page fetches anything from another site and, when
 // axe-core is installed, that every page meets WCAG 2.2 AA.
 // Needs Playwright and its Chromium. Run after building: node tools/test.mjs
@@ -109,10 +110,12 @@ try {
   await page.goto(`${base}/support/`, { waitUntil: 'networkidle' });
   check(await page.$eval('.side .cta', a => a.getAttribute('aria-current') === 'page'), 'support: the sidebar marks the page');
   check(await page.$eval('#ask-h ~ p .btn', a => a.href.startsWith('mailto:info@animalcrimebureau.org?subject=')), 'support: the button opens an email to Animal Crime Bureau');
+  // While a campaign is live, every page says Donate on the way to the Support page, whose button leads to the campaign.
   if (site.donateUrl) {
-    for (const path of ['/support/', '/ar/support/']) {
+    for (const [path, lang] of [['/support/', 'en'], ['/ar/support/', 'ar']]) {
       await page.goto(base + path, { waitUntil: 'networkidle' });
       check(await page.$eval('#donate-h ~ p .btn', (a, url) => a.href === url, site.donateUrl).catch(() => false), `support: the Donate button leads to the campaign on ${path}`);
+      check(await page.$eval('.side .cta', (a, label) => a.textContent.trim() === label, site[lang].donate), `support: the sidebar says ${site.en.donate} on ${path}`);
     }
   }
   // Page by page, the home page leads to the Support page, which ends the way, and no page comes round twice.
@@ -217,6 +220,14 @@ try {
   check(await open(page) === '0001', 'phone: tapping another closes the first');
   check(await page.$eval('#pk-3', b => { const r = b.getBoundingClientRect(); return r.top >= 0 && r.bottom <= innerHeight; }), 'phone: the opened category stays on screen');
   check(await page.$eval('.tabs', t => Math.abs(t.getBoundingClientRect().bottom - innerHeight) < 1), 'phone: the tab bar sits at the bottom of the screen');
+  if (site.donateUrl) {
+    for (const [path, lang] of [['/support/', 'en'], ['/ar/support/', 'ar']]) {
+      await page.goto(base + path, { waitUntil: 'networkidle' });
+      const shown = await page.$eval('#donate-h ~ p .btn', b => b.getBoundingClientRect().bottom <= document.querySelector('.tabs').getBoundingClientRect().top).catch(() => false);
+      const said = await page.$eval('.top-cta', (a, label) => a.textContent.trim() === label, site[lang].donate);
+      check(shown && said, `phone: the top bar says ${site.en.donate} and the Donate button shows without scrolling on ${path}`);
+    }
+  }
   await sideways(phone, 390);
   // WCAG 2.4.11: moving through a page with the keyboard never leaves focus under the bars at the top and bottom.
   // Reduced motion makes the browser scroll at once, so where focus lands can be measured straight away.

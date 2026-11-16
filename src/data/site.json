@@ -196,8 +196,13 @@
       "sources": "Official texts: Official Gazette of Egypt; UAE Legislation portal; Legislation and Legal Opinion Commission of Bahrain; Al Meezan, Qatar."
     },
     "donateHeading": "Donate",
-    "donateText": "Donations to Animal Crime Bureau are collected on GoFundMe.",
+    "donate": "Donate",
+    "donateText": "Animal Crime Bureau is raising funds for a permanent base for its work.",
     "donateButton": "Donate on GoFundMe",
+    "donateCovers": "Donations cover:",
+    "donateItems": ["Rent for the premises", "Utilities and running costs", "Food, shelter and veterinary care for the animals in its care", "Fieldwork and legal research"],
+    "donateHow": "GoFundMe does not pay out to Egypt. The fundraiser is organized from the United States by a supporter of Animal Crime Bureau, who transfers the funds to it directly. Updates on the fundraiser’s page report how the money is spent.",
+    "donateDescription": "Animal Crime Bureau is raising funds for a permanent base for its work. Donate on GoFundMe, or write to info@animalcrimebureau.org to fund it or work with it.",
     "supportContactHeading": "Fund or partner",
     "supportContact": "To fund Animal Crime Bureau or work with it, write to {email}.",
     "supportWrite": "Write to Animal Crime Bureau",
@@ -392,8 +397,13 @@
       "sources": "النصوص الرسمية: الجريدة الرسمية المصرية؛ بوابة التشريعات الإماراتية؛ هيئة التشريع والرأي القانوني في البحرين؛ الميزان، قطر."
     },
     "donateHeading": "التبرع",
-    "donateText": "تُجمع تبرعات <bdi lang=\"en\">Animal Crime Bureau</bdi> عبر <bdi lang=\"en\">GoFundMe</bdi>.",
+    "donate": "تبرّع",
+    "donateText": "تجمع <bdi lang=\"en\">Animal Crime Bureau</bdi> التبرعات لإقامة مقر دائم لعملها.",
     "donateButton": "تبرّع عبر GoFundMe",
+    "donateCovers": "تغطي التبرعات:",
+    "donateItems": ["إيجار المقر", "المرافق ومصروفات التشغيل", "الطعام والمأوى والرعاية البيطرية للحيوانات التي ترعاها", "العمل الميداني والبحث القانوني"],
+    "donateHow": "لا تحوّل <bdi lang=\"en\">GoFundMe</bdi> الأموال إلى مصر. لذلك ينظّم الحملة من الولايات المتحدة أحد داعمي <bdi lang=\"en\">Animal Crime Bureau</bdi>، ويحوّل التبرعات إليها مباشرة. وتُنشر على صفحة الحملة تحديثات تبيّن كيف تُنفق الأموال.",
+    "donateDescription": "تجمع Animal Crime Bureau التبرعات لإقامة مقر دائم لعملها. يمكن التبرع عبر GoFundMe، أو الكتابة إلى info@animalcrimebureau.org لتمويلها أو العمل معها.",
     "supportContactHeading": "التمويل والشراكة",
     "supportContact": "لتمويل <bdi lang=\"en\">Animal Crime Bureau</bdi> أو العمل معها، يُرجى الكتابة إلى {email}.",
     "supportWrite": "الكتابة إلى Animal Crime Bureau",
@@ -404,6 +414,6 @@
     "supportDescription": "توثّق Animal Crime Bureau الجرائم الواقعة على الحيوانات وتقيس تطبيق القانون بالمعيار الذي يحيل إليه القانون نفسه. لتمويلها أو العمل معها، يُرجى الكتابة إلى info@animalcrimebureau.org."
   },
   "subscribeUrl": "https://animalcrimebureau.substack.com/subscribe",
-  "donateUrl": "",
+  "donateUrl": "https://www.gofundme.com/f/a-permanent-base-for-animal-crime-bureau-in-egypt",
   "xrayName": "Law X-ray"
 }

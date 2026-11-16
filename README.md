@@ -110,10 +110,14 @@ different amounts, and a measurement that differs from the article's notes or
 from the words its red line marks, so a bar never draws what the text does not
 say.
 
-**Add the donation link.** When the campaign is live, put its full address in
-`donateUrl` in `src/data/site.json` and build: the Support page then shows a
-Donate button in both languages. It is a plain link, so the pages still load
-nothing from another site.
+**The donation campaign.** While a campaign is live, its full address is in
+`donateUrl` in `src/data/site.json`. Every page then says Donate on the way to
+the Support page, which opens with the Donate button, what the donations cover
+(`donateItems`) and who collects them (`donateHow`), in both languages. Take
+that wording from the campaign's own page, and change it when the campaign
+changes. The button is a plain link, so the pages still load nothing from
+another site. When the campaign closes, empty `donateUrl`: the button goes and
+the pages say Support this work again.
 
 **Law X-ray.** `src/data/xray.json` holds the data of Working Paper No. 2 as
 published: each definition or provision of Egypt's law, the text it is compared
