@@ -169,7 +169,7 @@ html[dir="rtl"] .bar i{transform-origin:right center}
 .pk-pen{display:block;margin-top:.4rem;font-size:.875rem;line-height:1.5;color:var(--ink-2);font-variant-numeric:tabular-nums}
 .pk-prov{display:block;margin-top:.2rem;font-size:.8125rem;line-height:1.45;color:var(--ink-3)}
 .chev{width:20px;height:20px;fill:none;stroke:var(--ink-2);stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;transition:transform .2s ease}
-html:not(.js) .chev{display:none}
+html:not(.js) .pk .chev{display:none}
 .pk[aria-expanded="true"] .chev{transform:rotate(180deg)}
 .pp{margin:1rem 0 1.25rem;padding:.1rem 0 .25rem;padding-inline-start:1rem;border-inline-start:2px solid var(--red)}
 .pp-k{margin:0 0 .15rem;font-size:.8125rem;color:var(--ink-2)}
@@ -191,7 +191,7 @@ html:not(.js) .chev{display:none}
   .js .pk{padding:.85rem 1rem;border-bottom:0;border-inline-start:2px solid transparent}
   .js .pk:hover{background:var(--hover)}
   .js .pk[aria-expanded="true"]{background:var(--wash);border-inline-start-color:var(--ink)}
-  .js .chev{display:none}
+  .js .pk .chev{display:none}
   .js .pp{grid-column:2;grid-row:1 / -1;align-self:start;margin:0;padding:.55rem 0 .6rem;padding-inline-start:1.6rem}
   .js .pp-act{font-size:1.5rem;line-height:1.4}
 }
@@ -244,6 +244,8 @@ html[dir="rtl"] .rec-no{text-align:right}
 .pub-h{font-size:2rem;line-height:1.2;letter-spacing:-.02em;margin:0 0 .6rem}
 .pub-lead{font-size:1.25rem;line-height:1.5;color:var(--ink-2);margin:0 0 2rem}
 .pub-cta{margin:0 0 1.25rem}
+.pub-more{display:flex;flex-wrap:wrap;gap:.35rem 1.5rem;margin:-.25rem 0 1.25rem;font-size:.9375rem}
+.pub-more li{margin:0}
 .rel li{margin:0 0 .5rem}
 
 /* About and the pages without a section */
@@ -324,6 +326,36 @@ html[dir="rtl"] .rec-no{text-align:right}
   .cmap-list .bar{grid-column:1 / -1;grid-row:2}
 }
 
+/* Law X-ray: Egypt's law beside the laws it shares text with, one definition or provision at a time. */
+.xr-list{border-top:1px solid var(--line)}
+.xr{border-bottom:1px solid var(--line);scroll-margin-top:.5rem}
+.xr summary{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;column-gap:1rem;padding:.9rem .15rem;cursor:pointer;list-style:none;-webkit-tap-highlight-color:transparent}
+.xr summary::-webkit-details-marker{display:none}
+.xr summary:hover{background:var(--hover)}
+.xr-t{grid-column:1;font-size:1.125rem;font-weight:500;line-height:1.4}
+.xr-o{grid-column:1;font-family:var(--law);font-size:1.125rem;line-height:1.8;color:var(--ink-2);text-align:left}
+.xr-start{grid-column:1;font-size:.875rem;color:var(--ink-2)}
+.xr summary .chev{grid-column:2;grid-row:1 / span 3}
+.xr[open] summary .chev{transform:rotate(180deg)}
+.xr-body{margin:.25rem 0 1.5rem;padding-inline-start:1rem;border-inline-start:2px solid var(--red)}
+.xr-pick{display:flex;flex-wrap:wrap;align-items:center;gap:.5rem .6rem;margin:0 0 1rem;font-size:.875rem;color:var(--ink-2)}
+.xr-pick button{padding:.45rem .8rem;border:1px solid var(--line-2);background:var(--paper);color:var(--ink);font-size:.875rem;line-height:1.2;cursor:pointer}
+.xr-pick button:hover{border-color:var(--ink)}
+.xr-pick button[aria-pressed="true"]{border-color:var(--ink);background:var(--ink);color:#fff}
+.xr-cmp + .xr-cmp{margin-top:1.5rem;padding-top:1.25rem;border-top:1px solid var(--line)}
+.xr-cmp[hidden] + .xr-cmp{margin-top:0;padding-top:0;border-top:0}
+.xr-name{margin:0 0 .25rem;font-size:.9375rem}
+.xr-name [lang="ar"]{font-family:var(--law);font-size:1.1em}
+.xr-lab{margin:1rem 0 .1rem;font-size:.875rem;color:var(--ink-2)}
+.xr-txt{margin:0;font-family:var(--law);font-size:1.3rem;line-height:2}
+.xr-stats,.xr-none,.xr-src{margin:.9rem 0 0;font-size:.875rem;color:var(--ink-2)}
+.xr-files{display:flex;flex-wrap:wrap;gap:.35rem 1.5rem}
+.xr-files li{margin:0}
+.xr-code{margin:.75rem 0 1rem;font-size:.9375rem}
+.xr-code summary{cursor:pointer}
+.xr-code pre{margin:.75rem 0 0;padding:.9rem 1rem;border:1px solid var(--line);overflow-x:auto;font:.8125rem/1.55 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;white-space:pre;text-align:left}
+.series a{color:inherit}
+
 /* Next: the one page that carries the story on. */
 .next{margin-top:3.5rem}
 .next a{display:grid;grid-template-columns:minmax(0,1fr) auto;column-gap:1.25rem;padding:1.25rem 0;border-top:2px solid var(--ink);border-bottom:1px solid var(--line);text-decoration:none}
@@ -367,6 +399,9 @@ html[dir="rtl"] .go{transform:scaleX(-1)}
   @page{margin:16mm 15mm}
   .side,.top,.tabs,.skip,.acts,.back,.install,.chev,.foot .links,.foot-more,.foot-install,.next{display:none!important}
   .bar i{animation:none!important}
+  .xr-pick,.xr-code,.xr summary .chev{display:none!important}
+  .xr-cmp{display:block!important}
+  .xr{break-inside:avoid}
   body{padding:0;font-size:11pt}
   .app{display:block}
   main{padding:0}

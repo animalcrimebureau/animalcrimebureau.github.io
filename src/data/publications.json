@@ -15,10 +15,10 @@
       "series": "ورقة العمل رقم ٢",
       "date": "أكتوبر ٢٠٢٦"
     },
-    "tool": {
-      "name": "Law X-ray",
-      "url": "https://animalcrimebureau.org/law-xray/"
-    },
+    "files": [
+      { "lang": "en", "path": "/law-xray/ACB-WP2-Even-If-It-Knows-the-Way-Back.pdf", "pages": 18 }
+    ],
+    "tool": "xray",
     "related": [
       {
         "law": "29-2023/1"
@@ -41,7 +41,11 @@
       "series": "منهج رقم ١",
       "date": "سبتمبر ٢٠٢٦"
     },
-    "version": "1.0"
+    "version": "1.0",
+    "licence": "cc-by-4.0",
+    "files": [
+      { "lang": "en", "path": "/publications/method-1/ACB-MET-001.pdf", "pages": 8 }
+    ]
   },
   {
     "slug": "investigation-report-1",
@@ -57,8 +61,14 @@
     },
     "ar": {
       "series": "تقرير التحقيق رقم ١",
-      "date": "سبتمبر ٢٠٢٦"
+      "date": "سبتمبر ٢٠٢٦",
+      "title": "«في حدود إمكانيات الدولة المتاحة»",
+      "subtitle": "قياس الإطار المصري لحيوانات الشارع على المعيار الذي أحال إليه قانون الدولة نفسه"
     },
+    "files": [
+      { "lang": "en", "path": "/publications/investigation-report-1/ACB-2026-001-en.pdf", "pages": 18 },
+      { "lang": "ar", "path": "/publications/investigation-report-1/ACB-2026-001-ar.pdf", "pages": 22 }
+    ],
     "related": [
       {
         "record": "ACB/2026/001"

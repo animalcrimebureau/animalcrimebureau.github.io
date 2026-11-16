@@ -59,6 +59,28 @@
     spy();
   }
 
+  // Law X-ray: where Egypt's text has a counterpart in two laws, one comparison is shown at a time.
+  d.querySelectorAll('[data-xr]').forEach(function (body) {
+    var bar = body.querySelector('.xr-pick');
+    if (!bar) return;
+    var picks = Array.prototype.slice.call(bar.querySelectorAll('button'));
+    var blocks = Array.prototype.slice.call(body.querySelectorAll('.xr-cmp'));
+    function choose(k) {
+      picks.forEach(function (b) { b.setAttribute('aria-pressed', b.getAttribute('data-k') === k ? 'true' : 'false'); });
+      blocks.forEach(function (x) { x.hidden = x.getAttribute('data-k') !== k; });
+    }
+    picks.forEach(function (b) { b.addEventListener('click', function () { choose(b.getAttribute('data-k')); }); });
+    bar.hidden = false;
+    choose(picks[0].getAttribute('data-k'));
+  });
+  // A link to one definition or provision of Law X-ray opens it.
+  function openTarget() {
+    var target = location.hash.length > 1 && d.getElementById(decodeURIComponent(location.hash.slice(1)));
+    if (target && target.tagName === 'DETAILS') target.open = true;
+  }
+  window.addEventListener('hashchange', openTarget);
+  openTarget();
+
   // Copy a citation, share a page.
   d.querySelectorAll('[data-copy]').forEach(function (b) {
     var source = d.getElementById(b.getAttribute('data-copy'));

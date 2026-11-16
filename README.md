@@ -35,6 +35,8 @@ Edit the sources in `src/`, never the generated HTML: the next build overwrites 
 | `src/data/register.json` | Case Register records, newest first |
 | `src/data/publications.json` | Publications, newest first |
 | `src/data/laws.json`, `src/fragments/law-*.html` | The law library and its annotated articles |
+| `src/data/xray.json`, `law-xray/` | Law X-ray: the definitions and provisions it compares, and the paper, texts and code it offers for download |
+| `publications/<slug>/*.pdf` | The publications themselves, as issued |
 | `src/fragments/*.html` | Longer passages: About and its standards, the register's introduction and method |
 
 Then, from the repository root:
@@ -77,8 +79,23 @@ working in the browser or meeting WCAG 2.2 AA.
 
 **Publish a publication.** Add it at the top of `src/data/publications.json` with
 its `slug` (the address, such as `working-paper-3`), `ref`, `date` (`2026-12`),
-`language`, `url` of the full text, `title`, `subtitle`, and `series` and `date`
-under `en` and `ar`. `tool`, `version` and `related` are optional.
+`language`, `url` of its Substack post, `title`, `subtitle`, and `series` and `date`
+under `en` and `ar`. `version`, `licence` and `related` are optional.
+
+Put the document itself in `publications/<slug>/` and list it under `files`, with
+its language and number of pages; the page then opens it from this site and keeps
+the Substack post as a second link:
+
+```json
+"files": [
+  { "lang": "en", "path": "/publications/working-paper-3/ACB-WP-003.pdf", "pages": 12 },
+  { "lang": "ar", "path": "/publications/working-paper-3/ACB-WP-003-ar.pdf", "pages": 14 }
+]
+```
+
+A publication issued in Arabic also takes its Arabic `title` and `subtitle` under
+`ar`: the Arabic pages then show them, open the Arabic file first and no longer
+mark the publication as English only.
 
 **Draw a fine or a measurement.** The home ledger draws, on one scale, the
 highest amount in pounds in each penalty, from `fine` in
@@ -98,9 +115,17 @@ say.
 Donate button in both languages. It is a plain link, so the pages still load
 nothing from another site.
 
+**Law X-ray.** `src/data/xray.json` holds the data of Working Paper No. 2 as
+published: each definition or provision of Egypt's law, the text it is compared
+with in the Emirati and Bahraini laws, and the words they share. The build finds
+every mark again from the words, by the paper's method, and refuses the data if
+one differs; it also refuses a copy map on the law page that counts differently
+from the tool. The files in `law-xray/` are the paper, its texts and its code,
+and their addresses are cited in the paper: do not rename them.
+
 **Record a correction.** Never change a published text silently. Add the
-correction, with its date and both languages, to the record or publication it
-amends:
+correction, with its date and both languages, to the record, the publication or
+the annotated article (in `src/data/laws.json`) it amends:
 
 ```json
 "corrections": [
@@ -132,7 +157,8 @@ policy in `tools/build.mjs` on purpose; the test fails otherwise.
 ## What the build makes
 
 - Every page in English and under `/ar/` in Arabic, including a page for each
-  record (`/register/ACB-2026-001/`) and each publication (`/publications/working-paper-2/`).
+  record (`/register/ACB-2026-001/`) and each publication (`/publications/working-paper-2/`),
+  and Law X-ray (`/law-xray/`).
 - `data/acb-case-register.csv` and `.json`: the published records in both languages,
   which anyone may reuse with credit to Animal Crime Bureau (CC BY 4.0).
 - `sitemap.xml` with the English and Arabic address of every page.

@@ -40,12 +40,16 @@
           "c8": [19, 19],
           "c9": 0,
           "c10": 0
-        }
+        },
+        "corrections": [
+          {
+            "date": "2026-11-16",
+            "en": "Four words of the Arabic text now carry the vowel mark printed in the Official Gazette: <bdi lang=\"ar\">نوعًا</bdi>, <bdi lang=\"ar\">معتمدًا</bdi>, <bdi lang=\"ar\">طبقًا</bdi> and <bdi lang=\"ar\">مالكًا</bdi>. No word and no measurement changed. Links to the official texts were added to the sources.",
+            "ar": "أُضيف إلى أربع كلمات من النص العربي التنوين المطبوع في الجريدة الرسمية: نوعًا، ومعتمدًا، وطبقًا، ومالكًا. لم تتغير أي كلمة ولا أي قياس. وأُضيفت روابط النصوص الرسمية إلى المصادر."
+          }
+        ]
       }
     ],
-    "tool": {
-      "name": "Law X-ray",
-      "url": "https://animalcrimebureau.org/law-xray/"
-    }
+    "tool": "xray"
   }
 ]

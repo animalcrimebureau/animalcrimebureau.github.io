@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 // Opens the built site in a browser and uses it as a reader would: the ledger
-// on the home page, the copy map, the way from page to page, old record links,
-// copying a citation, the index of definitions, reading offline, installing,
-// the tab bar on a phone, narrow screens and print. It also checks that no page
-// fetches anything from another site and, when axe-core is installed, that
-// every page meets WCAG 2.2 AA.
+// on the home page, the copy map, Law X-ray, a publication's files, the way from
+// page to page, old record links, copying a citation, the index of definitions,
+// reading offline, installing, the tab bar on a phone, narrow screens and print.
+// It also checks that no page fetches anything from another site and, when
+// axe-core is installed, that every page meets WCAG 2.2 AA.
 // Needs Playwright and its Chromium. Run after building: node tools/test.mjs
 
 import { createServer } from 'node:http';
@@ -157,6 +157,27 @@ try {
     check(marked, `article: the index marks the definition being read (${id})`);
   }
 
+  // Law X-ray: every definition and provision, the words two laws share, and the choice of law to compare.
+  const xray = JSON.parse(readFileSync(join(ROOT, 'src/data/xray.json'), 'utf8'));
+  const underlined = () => page.$$eval('#xr-d_5 .xr-cmp:not([hidden]) .xr-txt', texts => texts.map(t => [...t.querySelectorAll('.sh')].reduce((n, x) => n + x.textContent.trim().split(/\s+/).length, 0)));
+  await page.goto(`${base}/law-xray/`, { waitUntil: 'networkidle' });
+  check(await page.$$eval('.xr', items => items.length) === xray.items.length, `tool: Law X-ray lists its ${xray.items.length} definitions and provisions`);
+  check(await page.$eval('.side-nav a[aria-current="page"]', a => new URL(a.href).pathname === '/law-xray/'), 'tool: the sidebar marks Law X-ray under the law');
+  await page.click('#xr-d_5 summary');
+  const uae = xray.items.find(it => it.id === 'd_5').uae;
+  check(JSON.stringify(await underlined()) === JSON.stringify([uae.eg_marks.length, uae.marks.length]), `tool: the shared words of a definition are underlined in both laws (${uae.eg_marks.length} and ${uae.marks.length})`);
+  await page.click('#xr-d_5 .xr-pick button[data-k="bhr"]');
+  const bhr = xray.items.find(it => it.id === 'd_5').bhr;
+  check(JSON.stringify(await underlined()) === JSON.stringify([bhr.eg_marks.length, bhr.marks.length]), 'tool: choosing the other law shows its comparison in place');
+  await page.goto(`${base}/ar/law-xray/#xr-p_REPORT`, { waitUntil: 'networkidle' });
+  check(await page.$eval('#xr-p_REPORT', el => el.open), 'tool: a link to one provision opens it, in Arabic too');
+
+  // A publication issued in Arabic is read in Arabic on the Arabic page, from this site.
+  await page.goto(`${base}/ar/publications/investigation-report-1/`, { waitUntil: 'networkidle' });
+  const arabicPdf = await page.$eval('.pub-cta a', a => new URL(a.href).pathname);
+  const pdf = await page.request.get(base + arabicPdf);
+  check(arabicPdf.endsWith('-ar.pdf') && pdf.ok() && (await pdf.body()).subarray(0, 5).toString() === '%PDF-', 'publication: the Arabic page opens the Arabic report from this site');
+
   await page.goto(`${base}/`, { waitUntil: 'networkidle' });
   await page.evaluate(() => navigator.serviceWorker.ready);
   let saved = false;
@@ -177,6 +198,8 @@ try {
   check((await page.textContent('h1')).includes('The Incorporation Audit'), 'offline: a saved page opens without a connection');
   const support = await page.goto(`${base}/support/`).then(() => page.textContent('h1'), () => '');
   check(support === 'Support this work', 'offline: the Support page opens without a connection');
+  const tool = await page.goto(`${base}/law-xray/`).then(() => page.textContent('h1'), () => '');
+  check(tool === 'Law X-ray', 'offline: Law X-ray opens without a connection');
   await page.goto(`${base}/register/ACB-2026-999/`);
   check((await page.textContent('h1')) === 'No connection', 'offline: a page that was never saved says so');
   await wide.setOffline(false);
@@ -198,7 +221,7 @@ try {
   // WCAG 2.4.11: moving through a page with the keyboard never leaves focus under the bars at the top and bottom.
   // Reduced motion makes the browser scroll at once, so where focus lands can be measured straight away.
   await page.emulateMedia({ reducedMotion: 'reduce' });
-  for (const path of ['/', '/law/29-2023/1/', '/ar/support/']) {
+  for (const path of ['/', '/law/29-2023/1/', '/law-xray/', '/ar/support/']) {
     await page.goto(base + path, { waitUntil: 'networkidle' });
     let hidden = 0;
     for (let i = 0; i < 40; i++) {

@@ -143,6 +143,58 @@
     "supportHeading": "Support this work",
     "supportWork": "The work",
     "supportStandards": "Standards",
+    "publicationsSeries": "Investigation reports present the findings of a case file and carry its number. Methods set out, step by step, how Animal Crime Bureau reaches its findings; they are released under an open licence (CC BY 4.0), so that others can apply them and cite them by number. Working papers take up questions of legal theory in animal law.",
+    "readPdf": "Read the full text (PDF, {pages})",
+    "alsoIn": { "ar": "Arabic edition (PDF, {pages})", "en": "English edition (PDF, {pages})" },
+    "onSubstack": "Read on Substack",
+    "pubLicence": "Published under the Creative Commons Attribution 4.0 International licence (<a href=\"https://creativecommons.org/licenses/by/4.0/\">CC BY 4.0</a>).",
+    "official": "Official text",
+    "xray": {
+      "nav": "Egypt, UAE and Bahrain compared",
+      "description": "Choose any definition or provision of Egypt’s 2023 law on dangerous animals to see the text it shares with the Emirati law of 2016 and the Bahraini law of 2026.",
+      "leadMore": "The laws are shown in their original Arabic. A red line runs under the shared words.",
+      "definitions": "Definitions",
+      "provisions": "Provisions",
+      "start": "The paper starts here",
+      "law": {
+        "egy": "Egypt 2023",
+        "uae": "UAE 2016",
+        "bhr": "Bahrain 2026"
+      },
+      "compare": "Compare with",
+      "called": "In the {law}, this definition is called {name}.",
+      "lawFull": {
+        "uae": "Emirati law",
+        "bhr": "Bahraini law"
+      },
+      "none": "No counterpart in the Emirati or Bahraini law.",
+      "defRun0": "No consecutive words shared with {where}.",
+      "defRun": "Longest run shared with {where}: {n}.",
+      "where": {
+        "uae": "the Emirati definitions",
+        "bhr": "the Bahraini definitions"
+      },
+      "provRun0": "No consecutive words shared.",
+      "provRun": "Longest shared run: {n}.",
+      "pct": {
+        "uae": "{p}% of the Egyptian text’s five-word sequences appear in the Emirati text.",
+        "bhr": "{p}% of the Bahraini text’s five-word sequences appear in the Egyptian text."
+      },
+      "official": "Official texts",
+      "country": {
+        "EGY": "Egypt",
+        "UAE": "UAE",
+        "BHR": "Bahrain"
+      },
+      "howHeading": "How the tool works",
+      "how": "A word with a red line under it belongs to a sequence of five words that appears, word for word, in both texts. The marks are computed from the official Arabic texts after removing vowel marks and punctuation and treating different spellings of the same letter as one letter, by the method of Working Paper No. 2. Qatar’s law of 2019, drafted separately, shares about 1 percent with each of the other laws and serves as the baseline.",
+      "filesHeading": "Texts and code",
+      "dlTexts": "Download the texts (JSON)",
+      "dlCode": "Download the code (TXT)",
+      "dlPaper": "Download the paper (PDF)",
+      "showCode": "Show the code",
+      "sources": "Official texts: Official Gazette of Egypt; UAE Legislation portal; Legislation and Legal Opinion Commission of Bahrain; Al Meezan, Qatar."
+    },
     "donateHeading": "Donate",
     "donateText": "Donations to Animal Crime Bureau are collected on GoFundMe.",
     "donateButton": "Donate on GoFundMe",
@@ -287,6 +339,58 @@
     "supportHeading": "ادعم هذا العمل",
     "supportWork": "العمل",
     "supportStandards": "المعايير",
+    "publicationsSeries": "تعرض تقارير التحقيق نتائج ملف من ملفات الحالات وتحمل رقمه. وتبيّن المناهج، خطوة بخطوة، كيف تصل <bdi lang=\"en\">Animal Crime Bureau</bdi> إلى نتائجها، وتُنشر برخصة مفتوحة (<bdi lang=\"en\">CC BY 4.0</bdi>) ليطبّقها غيرها ويستشهد بها برقمها. وتتناول أوراق العمل مسائل النظرية القانونية في قانون الحيوان.",
+    "readPdf": "اقرأ النص الكامل (PDF، {pages})",
+    "alsoIn": { "ar": "النسخة العربية (PDF، {pages})", "en": "النسخة الإنجليزية (PDF، {pages})" },
+    "onSubstack": "اقرأ على <bdi lang=\"en\">Substack</bdi> (بالإنجليزية)",
+    "pubLicence": "منشور برخصة المشاع الإبداعي، نَسب المُصنَّف ٤٫٠ دولي (<a href=\"https://creativecommons.org/licenses/by/4.0/deed.ar\" lang=\"en\">CC BY 4.0</a>).",
+    "official": "النص الرسمي",
+    "xray": {
+      "nav": "مقارنة قوانين مصر والإمارات والبحرين",
+      "description": "اختر أي تعريف أو حكم من القانون المصري لسنة ٢٠٢٣ بشأن الحيوانات الخطرة لترى النص المشترك بينه وبين القانون الإماراتي لسنة ٢٠١٦ والقانون البحريني لسنة ٢٠٢٦.",
+      "leadMore": "ويمتد خط أحمر تحت الكلمات المشتركة.",
+      "definitions": "التعريفات",
+      "provisions": "الأحكام",
+      "start": "من هنا تبدأ الورقة",
+      "law": {
+        "egy": "مصر ٢٠٢٣",
+        "uae": "الإمارات ٢٠١٦",
+        "bhr": "البحرين ٢٠٢٦"
+      },
+      "compare": "قارن مع",
+      "called": "في {law} يحمل هذا التعريف اسم {name}.",
+      "lawFull": {
+        "uae": "القانون الإماراتي",
+        "bhr": "القانون البحريني"
+      },
+      "none": "لا يوجد ما يقابله في القانون الإماراتي أو القانون البحريني.",
+      "defRun0": "لا توجد كلمات متتالية مشتركة مع {where}.",
+      "defRun": "أطول تتابع مشترك مع {where}: {n}.",
+      "where": {
+        "uae": "التعريفات الإماراتية",
+        "bhr": "التعريفات البحرينية"
+      },
+      "provRun0": "لا توجد كلمات متتالية مشتركة.",
+      "provRun": "أطول تتابع مشترك: {n}.",
+      "pct": {
+        "uae": "{p}٪ من تتابعات الكلمات الخمس في النص المصري واردة في النص الإماراتي.",
+        "bhr": "{p}٪ من تتابعات الكلمات الخمس في النص البحريني واردة في النص المصري."
+      },
+      "official": "النصوص الرسمية",
+      "country": {
+        "EGY": "مصر",
+        "UAE": "الإمارات",
+        "BHR": "البحرين"
+      },
+      "howHeading": "كيف تعمل الأداة",
+      "how": "الكلمة التي يمتد تحتها الخط الأحمر تقع ضمن تتابع من خمس كلمات ورد بنصه في النصين. وتُحسب العلامات من النصوص العربية الرسمية بعد حذف التشكيل وعلامات الترقيم، وكتابة كل حرف له أكثر من صورة بصورة واحدة، بطريقة ورقة العمل رقم ٢. ويشترك القانون القطري لسنة ٢٠١٩، الذي صيغ بصورة مستقلة، مع كل قانون من القوانين الأخرى في نحو ١٪، وهذه النسبة هي خط الأساس.",
+      "filesHeading": "النصوص والكود",
+      "dlTexts": "تنزيل النصوص (JSON)",
+      "dlCode": "تنزيل الكود (TXT)",
+      "dlPaper": "تنزيل الورقة (PDF، بالإنجليزية)",
+      "showCode": "عرض الكود",
+      "sources": "النصوص الرسمية: الجريدة الرسمية المصرية؛ بوابة التشريعات الإماراتية؛ هيئة التشريع والرأي القانوني في البحرين؛ الميزان، قطر."
+    },
     "donateHeading": "التبرع",
     "donateText": "تُجمع تبرعات <bdi lang=\"en\">Animal Crime Bureau</bdi> عبر <bdi lang=\"en\">GoFundMe</bdi>.",
     "donateButton": "تبرّع عبر GoFundMe",
@@ -300,5 +404,6 @@
     "supportDescription": "توثّق Animal Crime Bureau الجرائم الواقعة على الحيوانات وتقيس تطبيق القانون بالمعيار الذي يحيل إليه القانون نفسه. لتمويلها أو العمل معها، يُرجى الكتابة إلى info@animalcrimebureau.org."
   },
   "subscribeUrl": "https://animalcrimebureau.substack.com/subscribe",
-  "donateUrl": ""
+  "donateUrl": "",
+  "xrayName": "Law X-ray"
 }

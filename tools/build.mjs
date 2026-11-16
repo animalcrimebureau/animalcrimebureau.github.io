@@ -21,6 +21,7 @@ const ledger = data('ledger');
 const records = data('register');
 const publications = data('publications');
 const laws = data('laws');
+const xray = data('xray');
 
 const ORIGIN = site.origin;
 const LANGS = ['en', 'ar'];
@@ -45,6 +46,12 @@ const formatDate = (iso, lang) => {
 const brandIn = (text, lang) => (lang === 'ar' ? text.replace(/Animal Crime Bureau( \(ACB\))?/, m => `<bdi lang="en">${m}</bdi>`) : text);
 // Arabic counts its nouns: 3 to 10 take the plural, other numbers the singular (103 كلمات, 111 كلمة).
 const arWords = n => (n === 1 ? 'كلمة' : n === 2 ? 'كلمتان' : n % 100 >= 3 && n % 100 <= 10 ? 'كلمات' : 'كلمة');
+// 5 words, 18 pages; in Arabic كلمة واحدة, كلمتان, ٥ كلمات, ١٨ كلمة.
+const countOf = (n, lang, en, ar) => (lang === 'ar'
+  ? (n === 1 ? `${ar[1]} واحدة` : n === 2 ? ar[2] : `${num(n, 'ar')} ${n % 100 >= 3 && n % 100 <= 10 ? ar[0] : ar[1]}`)
+  : `${n} ${n === 1 ? en[0] : en[1]}`);
+const wordsOf = (n, lang) => countOf(n, lang, ['word', 'words'], ['كلمات', 'كلمة', 'كلمتان']);
+const pagesOf = (n, lang) => countOf(n, lang, ['page', 'pages'], ['صفحات', 'صفحة', 'صفحتان']);
 const ref = (r, lang, cls = 'ref') => (lang === 'ar' ? `<bdi class="${cls}" lang="en">${r}</bdi>` : `<span class="${cls}">${r}</span>`);
 const brandName = lang => (lang === 'ar' ? `<span lang="en">${site.name}</span>` : `<span>${site.name}</span>`);
 const fragment = (name, lang) => read(`src/fragments/${name}.${lang}.html`).trim();
@@ -68,10 +75,13 @@ export const P = {
 };
 const SECTIONS = ['home', 'law', 'register', 'publications', 'about'];
 P.support = l => `${pre(l)}/support/`;
+P.xray = l => `${pre(l)}/law-xray/`;
 const DATA_CSV = '/data/acb-case-register.csv';
 const DATA_JSON = '/data/acb-case-register.json';
 // The Case Register's data may be reused by anyone, with credit to Animal Crime Bureau.
 const DATA_LICENCE = 'https://creativecommons.org/licenses/by/4.0/';
+// The licences a publication may be issued under.
+const LICENCES = { 'cc-by-4.0': 'https://creativecommons.org/licenses/by/4.0/' };
 
 const recordById = Object.fromEntries(records.map(r => [r.id, r]));
 // The scale of the ledger's bars: the highest amount in pounds any of its penalties names.
@@ -135,26 +145,34 @@ function recordItem(r, lang) {
   return `<li><a href="${P.record(lang, r)}">${ref(r.id, lang, 'rec-no ref')}<span class="rec-sum">${r[lang].summary}</span><span class="rec-ev">${evidenceBars(r.grade)}${line}</span></a></li>`;
 }
 
+// A publication's file in one language, and whether it was issued in Arabic.
+const fileOf = (p, lang) => (p.files || []).find(f => f.lang === lang);
+const inArabic = p => Boolean(fileOf(p, 'ar'));
+// On Arabic pages a publication issued in Arabic carries its Arabic title; the others keep their English one.
+const pubTitle = (p, lang) => (lang === 'ar' && p.ar.title ? p.ar.title : latin(p.title, lang));
+const pubSubtitle = (p, lang) => (lang === 'ar' && p.ar.subtitle ? p.ar.subtitle : latin(p.subtitle, lang));
+
 function seriesLine(p, lang) {
   const t = p[lang];
   return lang === 'ar'
-    ? `${t.series}، ${ref(p.ref, lang)}، ${t.date}، ${site.ar.inEnglish}`
+    ? `${t.series}، ${ref(p.ref, lang)}، ${t.date}${inArabic(p) ? '' : `، ${site.ar.inEnglish}`}`
     : `${t.series}, ${ref(p.ref, lang)}, ${t.date}`;
 }
 
+// The companion tool of a law or a paper is a page of this site.
+const toolLink = lang => (lang === 'ar'
+  ? `${site.ar.companion}: <a href="${P.xray(lang)}" lang="en">${site.xrayName}</a>`
+  : `<a href="${P.xray(lang)}">${site.en.companion}: ${site.xrayName}</a>`);
+
 function pubExtra(p, lang) {
   const L = site[lang];
-  if (p.tool) {
-    return lang === 'ar'
-      ? `<p class="pub-extra">${L.companion}: <a href="${p.tool.url}" lang="en">${p.tool.name}</a></p>`
-      : `<p class="pub-extra"><a href="${p.tool.url}">${L.companion}: ${p.tool.name}</a></p>`;
-  }
+  if (p.tool) return `<p class="pub-extra">${toolLink(lang)}</p>`;
   if (p.version) return `<p class="pub-extra">${fill(L.version, { v: latin(p.version, lang) })}</p>`;
   return '';
 }
 
 function pubItem(p, lang, h = 'h3') {
-  return `<li class="pub"><p class="series">${seriesLine(p, lang)}</p><${h} class="pub-title"><a href="${P.publication(lang, p)}">${latin(p.title, lang)}</a></${h}><p class="pub-sub">${latin(p.subtitle, lang)}</p>${pubExtra(p, lang)}</li>`;
+  return `<li class="pub"><p class="series">${seriesLine(p, lang)}</p><${h} class="pub-title"><a href="${P.publication(lang, p)}">${pubTitle(p, lang)}</a></${h}><p class="pub-sub">${pubSubtitle(p, lang)}</p>${pubExtra(p, lang)}</li>`;
 }
 
 // The defined terms of an annotated article, read from its fragment, and whether
@@ -215,11 +233,7 @@ function lawIndexBody(lang) {
     const cards = list.map(law => {
       const t = law[lang];
       const arts = law.articles.map(a => `<li><a class="art-link" href="${P.article(lang, law, a)}"><span class="art-link-n">${a[lang].article}</span><span class="art-link-h">${a[lang].heading}</span>${svg('next', 'art-link-go')}</a><p class="art-link-sum">${lawSum(a, lang)}</p></li>`).join('');
-      const tool = law.tool
-        ? (lang === 'ar'
-          ? `<p class="pub-extra">${L.companion}: <a href="${law.tool.url}" lang="en">${law.tool.name}</a></p>`
-          : `<p class="pub-extra"><a href="${law.tool.url}">${L.companion}: ${law.tool.name}</a></p>`)
-        : '';
+      const tool = law.tool ? `<p class="pub-extra">${toolLink(lang)}</p>` : '';
       return `<li class="law-card"><h3 class="law-title">${t.title}</h3>${lang === 'en' ? `<p class="law-ar" lang="ar" dir="rtl">${law.title_ar}</p>` : ''}<p class="gaz">${t.gazette}</p><h4 class="arts-h">${L.lawArticles}</h4><ul class="arts">${arts}</ul>${tool}</li>`;
     }).join('');
     return `<section aria-labelledby="c-${c}"><h2 class="sec" id="c-${c}">${list[0][lang].country}</h2><ul class="laws">${cards}</ul></section>`;
@@ -233,16 +247,18 @@ function articleBody(law, a, lang) {
   let html = fragment(a.fragment, lang);
   const list = terms(html, lang);
   html = html.replace('<!--toc-->', copyMap(a, list, lang)).replace('<!--actions:cite-->', actions('cite', lang));
+  const fix = amendments(a.corrections, L.publicationCorrections, lang);
   return `<header class="wrap law-head">
   ${back(P.law(lang), L.lawHeading)}
   <p class="law-no">${t.country}</p>
   <p class="law-title">${t.title}</p>
   ${lang === 'en' ? `<p class="law-ar" lang="ar" dir="rtl">${law.title_ar}</p>` : ''}
   <p class="gaz">${t.gazette}</p>
-  <h1 class="art">${a[lang].article}</h1><p class="art-sub">${a[lang].heading}</p>
+  <h1 class="art">${a[lang].article}</h1><p class="art-sub">${a[lang].heading}</p>${fix.note}
 </header>
 <div class="wrap">
   ${html}
+  ${fix.block}
 </div>`;
 }
 
@@ -271,6 +287,88 @@ function copyMap(a, list, lang) {
     return `<li><a href="#${x.id}"><span class="cmap-term">${x.label}</span><span class="bar bar-m" aria-hidden="true">${v ? `<i style="--v:${v.toFixed(4)}"></i>` : ''}</span><span class="cmap-val">${label}</span></a></li>`;
   }).join('');
   return `<figure class="cmap" aria-labelledby="cmap-h"><figcaption><span class="cmap-t" id="cmap-h">${L.cmapHeading}</span><span class="cmap-s">${L.cmapNote}</span></figcaption><ol class="cmap-list">${rows}</ol></figure>`;
+}
+
+// Law X-ray shows the measurement of Working Paper No. 2: Egypt's law of 2023 beside the Emirati
+// law of 2016 and the Bahraini law of 2026, with a red line under the words they share.
+const XRAY_PAPER = 'working-paper-2';
+// The data names each article in Arabic, as the laws do.
+const ARTICLE_EN = {
+  'المادة ١': 'Article 1', 'المادة ٢': 'Article 2', 'المادة ٣': 'Article 3', 'المادة ٦': 'Article 6', 'المادة ٧': 'Article 7',
+  'المادة ٨': 'Article 8', 'المادة ٩': 'Article 9', 'المادة ١٠': 'Article 10', 'المادة ١١': 'Article 11', 'المادة ١٦': 'Article 16',
+  'المادة ١٧': 'Article 17', 'المادة ٢٤': 'Article 24', 'المادتان ٣ و٤': 'Articles 3 and 4', 'المادتان ٤ و٥': 'Articles 4 and 5',
+  'المادتان ٥ و٦': 'Articles 5 and 6', 'المادتان ٨ و٩': 'Articles 8 and 9', 'المادتان ١٧ و١٨': 'Articles 17 and 18',
+  'المادتان ١٠ و١١ (١)': 'Articles 10 and 11(1)', 'المواد ٣ و٤ و٥': 'Articles 3, 4 and 5', 'المادة ٧ (أ)': 'Article 7(a)',
+  'المادة ٧ (ب، ج)': 'Article 7(b) and (c)',
+};
+// How the paper writes in English the three Arabic names it turns on.
+const TRANSLIT = { 'الحيوان السائب': 'sa’ib', 'الحيوان الضال': 'dall', 'الحيوان المتروك': 'matruk' };
+
+// The words of a text with the shared ones underlined; punctuation that ends a run stays outside the line.
+function marked(words, marks) {
+  const on = new Set(marks);
+  const runs = [];
+  words.forEach((w, i) => {
+    const last = runs[runs.length - 1];
+    if (last && last.on === on.has(i)) last.words.push(w);
+    else runs.push({ on: on.has(i), words: [w] });
+  });
+  return runs.map(r => {
+    const text = esc(r.words.join(' '));
+    if (!r.on) return text;
+    const [, body, tail] = text.match(/^(.*?)([\s.،؛:,]*)$/s);
+    return `<span class="sh">${body}</span>${tail}`;
+  }).join(' ');
+}
+
+function xrayBody(lang) {
+  const L = site[lang];
+  const X = L.xray;
+  const article = a => (lang === 'ar' ? a : ARTICLE_EN[a]);
+  const text = (label, art, words, marks) => `<p class="xr-lab">${label}${comma(lang)}${article(art)}</p><p class="xr-txt" lang="ar" dir="rtl">${marked(words, marks)}</p>`;
+  const sources = `<p class="xr-src">${X.official}: ${['EGY', 'UAE', 'BHR'].map(k => `<a href="${esc(xray.src[k])}" hreflang="ar">${X.country[k]}</a>`).join(comma(lang))}</p>`;
+  const item = it => {
+    const others = ['uae', 'bhr'].filter(k => it[k]);
+    const blocks = others.map(k => {
+      const c = it[k];
+      let name = '';
+      if (it.group === 'def' && c.label) {
+        const term = `<span lang="ar" dir="rtl">${esc(c.label)}</span>`;
+        const shown = c.label === it.ar ? term : `<b>${term}${lang === 'en' && TRANSLIT[c.label] ? ` (${TRANSLIT[c.label]})` : ''}</b>`;
+        name = `<p class="xr-name">${fill(X.called, { law: X.lawFull[k], name: shown })}</p>`;
+      }
+      const run = it.group === 'def'
+        ? (c.run ? fill(X.defRun, { where: X.where[k], n: wordsOf(c.run, lang) }) : fill(X.defRun0, { where: X.where[k] }))
+        : `${c.run ? fill(X.provRun, { n: wordsOf(c.run, lang) }) : X.provRun0} ${fill(X.pct[k], { p: num(c.pct, lang) })}`;
+      return `<div class="xr-cmp" data-k="${k}">${name}${text(X.law.egy, it.eg.art, c.eg_words, c.eg_marks)}${text(X.law[k], c.art, c.words, c.marks)}<p class="xr-stats">${run}</p></div>`;
+    }).join('');
+    // With two laws to compare, the script shows one at a time; without it both are shown.
+    const pick = others.length > 1
+      ? `<div class="xr-pick" role="group" aria-label="${X.compare}" hidden><span>${X.compare}:</span>${others.map((k, i) => `<button type="button" data-k="${k}" aria-pressed="${i === 0}">${X.law[k]}</button>`).join('')}</div>`
+      : '';
+    const alone = others.length ? '' : `${text(X.law.egy, it.eg.art, it.eg_text.split(' '), [])}<p class="xr-none">${X.none}</p>`;
+    const names = lang === 'ar'
+      ? `<h3 class="xr-t">${esc(it.ar)}</h3>`
+      : `<h3 class="xr-t">${esc(it.en)}</h3><span class="xr-o" lang="ar" dir="rtl">${esc(it.ar)}</span>`;
+    return `<details class="xr" id="xr-${it.id}" name="xr"><summary>${names}${it.start ? `<span class="xr-start">${X.start}</span>` : ''}${svg('chev', 'chev')}</summary><div class="xr-body" data-xr>${pick}${blocks}${alone}${sources}</div></details>`;
+  };
+  const group = (g, heading, id) => `<section aria-labelledby="${id}"><h2 class="sec" id="${id}">${heading}</h2><div class="xr-list">${xray.items.filter(it => it.group === g).map(item).join('\n')}</div></section>`;
+  const paper = pubBySlug[XRAY_PAPER];
+  return `<div class="wrap">
+${back(P.law(lang), L.lawHeading)}
+<p class="series"><a href="${P.publication(lang, paper)}">${seriesLine(paper, lang)}</a></p>
+<h1 class="page-h">${latin(site.xrayName, lang)}</h1>
+<p class="prose">${X.description} ${X.leadMore}</p>
+${group('def', X.definitions, 'xr-def')}
+${group('prov', X.provisions, 'xr-prov')}
+<div class="after">
+<h2>${X.howHeading}</h2><p>${X.how}</p>
+<h2>${X.filesHeading}</h2>
+<ul class="plain xr-files"><li><a href="/law-xray/acb-wp2-texts.json" download>${X.dlTexts}</a></li><li><a href="/law-xray/acb-wp2-statutory-attribution.txt" download>${X.dlCode}</a></li><li><a href="${fileOf(paper, 'en').path}" download>${X.dlPaper}</a></li></ul>
+<details class="xr-code"><summary>${X.showCode}</summary><pre dir="ltr" lang="en" tabindex="0">${esc(read('law-xray/acb-wp2-statutory-attribution.txt'))}</pre></details>
+<p>${X.sources}</p>
+</div>
+</div>`;
 }
 
 function supportBody(lang) {
@@ -319,7 +417,7 @@ function recordBody(r, lang) {
     : `<li>${num(i + 1, lang)}&nbsp;&nbsp;${g}</li>`)).join('');
   const related = (r.related || []).map(slug => {
     const p = pubBySlug[slug];
-    return `<a href="${P.publication(lang, p)}">${p[lang].series}</a>${lang === 'ar' ? ` (${L.inEnglish})` : ''}`;
+    return `<a href="${P.publication(lang, p)}">${p[lang].series}</a>${lang === 'ar' && !inArabic(p) ? ` (${L.inEnglish})` : ''}`;
   }).join('<br>');
   const fix = amendments(r.corrections, L.recordCorrections, lang);
   const url = ORIGIN + P.record(lang, r);
@@ -342,6 +440,7 @@ function publicationsBody(lang) {
   const L = site[lang];
   return `<div class="wrap"><h1 class="page-h">${L.publicationsHeading}</h1>
 <p class="prose">${L.publicationsIntro}</p>
+<p class="prose">${L.publicationsSeries}</p>
 <ul class="pubs">${publications.map(p => pubItem(p, lang, 'h2')).join('')}</ul></div>`;
 }
 
@@ -357,15 +456,25 @@ function publicationBody(p, lang) {
     return `<li><a href="${P.record(lang, r)}">${fill(L.relatedRecord, { ref: ref(r.id, lang) })}</a></li>`;
   }).join('');
   const fix = amendments(p.corrections, L.publicationCorrections, lang);
+  const arabic = lang === 'ar' && inArabic(p);
   const full = `${p.title}: ${p.subtitle}`;
   const citation = lang === 'ar'
-    ? `${latin(site.name, lang)}، ${latin(full, lang)}، ${t.series}، ${ref(p.ref, lang)}، ${t.date} (${L.inEnglish}). ${latin(p.url, lang)}`
+    ? (arabic
+      ? `${latin(site.name, lang)}، ${p.ar.title}: ${p.ar.subtitle}، ${t.series}، ${ref(p.ref, lang)}، ${t.date}. ${latin(ORIGIN + P.publication(lang, p), lang)}`
+      : `${latin(site.name, lang)}، ${latin(full, lang)}، ${t.series}، ${ref(p.ref, lang)}، ${t.date} (${L.inEnglish}). ${latin(p.url, lang)}`)
     : `${site.name}, ${full}, ${t.series}, ${ref(p.ref, lang)}, ${t.date}. ${p.url}`;
+  // The document itself is read from this site, in the page's language where it was issued in it; Substack carries the web edition.
+  const own = fileOf(p, lang) || fileOf(p, 'en');
+  const english = lang === 'ar' ? ` <span class="btn-note">(${L.inEnglish})</span>` : '';
+  const pdf = (f, label) => `<a${label === L.readPdf ? ' class="btn"' : ''} href="${f.path}" hreflang="${f.lang}" type="application/pdf">${fill(label, { pages: pagesOf(f.pages, lang) })}${label === L.readPdf && lang === 'ar' && f.lang !== 'ar' ? english : ''}</a>`;
+  const cta = own
+    ? `<p class="pub-cta">${pdf(own, L.readPdf)}</p><ul class="plain pub-more">${p.files.filter(f => f !== own).map(f => `<li>${pdf(f, L.alsoIn[f.lang])}</li>`).join('')}<li><a href="${p.url}" hreflang="${p.language}">${L.onSubstack}</a></li></ul>`
+    : `<p class="pub-cta"><a class="btn" href="${p.url}" hreflang="${p.language}">${L.readFull}${english}${svg('ext', 'ext')}</a></p>`;
   return `<div class="wrap">
 ${back(P.publications(lang), L.publicationsHeading)}
-<article class="pub-page" aria-labelledby="h-pub"><p class="series">${seriesLine(p, lang)}</p><h1 class="pub-h" id="h-pub">${latin(p.title, lang)}</h1><p class="pub-lead">${latin(p.subtitle, lang)}</p>${fix.note}
-<p class="pub-cta"><a class="btn" href="${p.url}" hreflang="${p.language}">${L.readFull}${lang === 'ar' ? ` <span class="btn-note">(${L.inEnglish})</span>` : ''}${svg('ext', 'ext')}</a></p>
-${pubExtra(p, lang)}
+<article class="pub-page" aria-labelledby="h-pub"><p class="series">${seriesLine(p, lang)}</p><h1 class="pub-h" id="h-pub">${pubTitle(p, lang)}</h1><p class="pub-lead">${pubSubtitle(p, lang)}</p>${fix.note}
+${cta}
+${pubExtra(p, lang)}${p.licence ? `<p class="pub-extra">${L.pubLicence}</p>` : ''}
 ${rel ? `<h2 class="sec">${L.onSite}</h2><ul class="plain rel">${rel}</ul>` : ''}${fix.block}</article>
 ${citeBlock(L.citePublication, citation, lang)}
 </div>`;
@@ -402,14 +511,14 @@ function subNav(section, pg) {
           ? `<ul class="terms">${pg.terms.map(x => `<li><a href="#${x.id}"${x.shared ? ' class="sh-t"' : ''}>${x.label}</a></li>`).join('')}<li class="terms-key">${L.tocShared}</li></ul>`
           : '';
         return `<li><a href="${href}"${cur(href)}>${law[lang].number}<small>${a[lang].article}${comma(lang)}${a[lang].heading}</small></a>${inner}</li>`;
-      })).join('');
+      }).concat(law.tool ? `<li><a href="${P.xray(lang)}"${cur(P.xray(lang))}>${latin(site.xrayName, lang)}<small>${L.xray.nav}</small></a></li>` : [])).join('');
     }).join('')}</ul>`;
   }
   if (section === 'register') {
     return `<ul class="sub">${records.slice(0, 12).map(r => `<li><a href="${P.record(lang, r)}"${cur(P.record(lang, r))}>${ref(r.id, lang)}<small>${r[lang].summary}</small></a></li>`).join('')}</ul>`;
   }
   if (section === 'publications') {
-    return `<ul class="sub">${publications.map(p => `<li><a href="${P.publication(lang, p)}"${cur(P.publication(lang, p))}>${latin(p.title, lang)}<small>${p[lang].series}</small></a></li>`).join('')}</ul>`;
+    return `<ul class="sub">${publications.map(p => `<li><a href="${P.publication(lang, p)}"${cur(P.publication(lang, p))}>${pubTitle(p, lang)}<small>${p[lang].series}</small></a></li>`).join('')}</ul>`;
   }
   return '';
 }
@@ -440,7 +549,7 @@ let jsVersion = '';
 const JS_FLAG = "document.documentElement.className+=' js'";
 const SPECULATION = JSON.stringify({
   prerender: [{
-    where: { and: [{ href_matches: '/*' }, { not: { href_matches: '/law-xray/*' } }, { not: { href_matches: '/data/*' } }, { not: { selector_matches: '[download]' } }] },
+    where: { and: [{ href_matches: '/*' }, { not: { href_matches: '/data/*' } }, { not: { href_matches: '/*.pdf' } }, { not: { selector_matches: '[download]' } }] },
     eagerness: 'moderate',
   }],
 });
@@ -595,6 +704,53 @@ function validate() {
     both(p, ['series', 'date'], where);
     for (const x of p.related || []) need(x.law ? articleByKey[x.law] : recordById[x.record], `${where}: related ${x.law ? `article "${x.law}"` : `record "${x.record}"`} does not exist`);
     dated(p.corrections, where);
+    for (const f of p.files || []) {
+      need(LANGS.includes(f.lang) && Number.isInteger(f.pages) && f.pages > 0, `${where}: each file needs a "lang" of en or ar and its number of "pages"`);
+      need(/^\/[^\s"]+\.pdf$/.test(f.path || '') && existsSync(join(ROOT, f.path)), `${where}: the file ${f.path} is not in the repository`);
+    }
+    need(!p.files || fileOf(p, 'en'), `${where}: a publication with files needs its English file`);
+    need(!p.ar?.title || (inArabic(p) && p.ar.subtitle?.trim()), `${where}: an Arabic title goes with an Arabic file and an Arabic subtitle`);
+    need(!p.licence || LICENCES[p.licence], `${where}: licence "${p.licence}" is not one the build knows`);
+    need(!p.tool || p.tool === 'xray', `${where}: tool "${p.tool}" is not one the build knows`);
+  }
+  need(pubBySlug[XRAY_PAPER] && fileOf(pubBySlug[XRAY_PAPER], 'en'), `publications.json: Law X-ray needs "${XRAY_PAPER}" and its English file`);
+  // Law X-ray may only mark what the published method finds: every mark is found again from the words.
+  const letters = w => w.replace(/[\u064B-\u0652\u0670\u0640]/g, '').replace(/[إأآٱ]/g, 'ا').replace(/ى/g, 'ي').replace(/ة/g, 'ه').replace(/ؤ/g, 'و').replace(/ئ/g, 'ي')
+    .replace(/[^\u0621-\u064A\s]/g, ' ').split(/\s+/).filter(Boolean);
+  const sequence = words => words.flatMap((w, i) => letters(w).map(part => [part, i]));
+  const fives = s => s.slice(0, Math.max(0, s.length - 4)).map((_, i) => s.slice(i, i + 5));
+  const five = f => f.map(x => x[0]).join(' ');
+  const sorted = list => [...list].sort((x, y) => x - y).join();
+  for (const it of xray.items) {
+    const where = `xray.json, ${it.id || 'an item without an id'}`;
+    need(it.en?.trim() && it.ar?.trim() && ['def', 'prov'].includes(it.group) && it.eg_text?.trim(), `${where}: needs "en", "ar", "eg_text" and a group of "def" or "prov"`);
+    need(ARTICLE_EN[it.eg?.art], `${where}: no English name for "${it.eg?.art}"`);
+    for (const k of ['uae', 'bhr']) {
+      const c = it[k];
+      if (!c) continue;
+      need(ARTICLE_EN[c.art], `${where}: no English name for "${c.art}"`);
+      const a = sequence(c.eg_words);
+      const b = sequence(c.words);
+      const inB = new Set(fives(b).map(five));
+      const shared = new Set(fives(a).map(five).filter(g => inB.has(g)));
+      const cover = s => sorted(new Set(fives(s).filter(f => shared.has(five(f))).flat().map(x => x[1])));
+      need(cover(a) === sorted(c.eg_marks), `${where}: the marks on Egypt's text against ${k} are not what the method finds`);
+      need(cover(b) === sorted(c.marks), `${where}: the marks on the ${k} text are not what the method finds`);
+      need(Number.isInteger(c.run) && (it.group === 'def' || Number.isInteger(c.pct)), `${where}: needs "run" against ${k}, and "pct" for a provision`);
+    }
+  }
+  // The copy map of an article and Law X-ray draw the same measurement.
+  const definitions = xray.items.filter(it => it.group === 'def');
+  for (const law of laws) {
+    need(!law.tool || law.tool === 'xray', `laws.json, ${law.id}: tool "${law.tool}" is not one the build knows`);
+    for (const a of law.tool ? law.articles : []) {
+      Object.entries(a.measure || {}).forEach(([id, m], i) => {
+        const c = definitions[i]?.uae;
+        const marks = c ? c.eg_marks.length : 0;
+        const want = m === 0 ? 0 : Array.isArray(m) ? m[0] : (c ? c.eg_words.filter(w => letters(w).length).length : -1);
+        need(marks === want, `laws.json, ${law.id} article ${a.n}: ${id} shares ${want} words but Law X-ray marks ${marks}`);
+      });
+    }
   }
   for (const it of ledger) {
     const where = `ledger.json, ${it.en?.category || 'an entry'}`;
@@ -623,6 +779,7 @@ function validate() {
   // The copy map may only draw what the article's own notes state.
   for (const law of laws) {
     for (const a of law.articles) {
+      dated(a.corrections, `laws.json, ${law.id} article ${a.n}`);
       if (!a.measure) continue;
       const where = `laws.json, ${law.id} article ${a.n}`;
       for (const lang of LANGS) {
@@ -662,7 +819,8 @@ function nextKey(key) {
   const [kind, id] = key.split(/:(.*)/s);
   const firstArticle = `article:${laws[0].id}/${laws[0].articles[0].n}`;
   if (kind === 'home' || kind === 'law') return firstArticle;
-  if (kind === 'article') return 'register';
+  if (kind === 'article') return articleByKey[id].law.tool ? 'xray' : 'register';
+  if (kind === 'xray') return 'register';
   if (kind === 'register') return records.length ? `record:${records[0].id}` : 'publications';
   if (kind === 'record') return 'publications';
   if (kind === 'publications') return publications.length ? `publication:${publications[0].slug}` : 'support';
@@ -720,6 +878,14 @@ export function pages() {
     }
 
     out.push({
+      key: 'xray', lang, section: 'law', path: P.xray(lang), alt: P.xray(o), cls: 'xray',
+      peek: { title: latin(site.xrayName, lang), text: L.xray.description },
+      title: titled(site.xrayName), description: L.xray.description, body: xrayBody(lang),
+      card: { key: 'law-xray', kicker: strip(seriesLine(pubBySlug[XRAY_PAPER], lang)), title: site.xrayName, sub: L.xray.description, latinTitle: true },
+      jsonld: [crumbs(lang, [home, [L.nav.law, P.law(lang)], [site.xrayName, P.xray(lang)]])],
+    });
+
+    out.push({
       key: 'register', lang, section: 'register', path: P.register(lang), alt: P.register(o), cls: 'register',
       peek: { title: L.registerHeading, text: brandIn(L.registerDescription, lang) },
       title: titled(L.registerHeading), description: L.registerDescription, body: registerBody(lang),
@@ -759,24 +925,32 @@ export function pages() {
 
     for (const p of publications) {
       const path = P.publication(lang, p);
-      const full = `${p.title}: ${p.subtitle}`;
+      // A publication issued in Arabic is presented by its Arabic title and file on the Arabic page.
+      const arabic = lang === 'ar' && inArabic(p);
+      const title = arabic ? p.ar.title : p.title;
+      const subtitle = arabic ? p.ar.subtitle : p.subtitle;
+      const full = `${title}: ${subtitle}`;
+      const file = fileOf(p, lang) || fileOf(p, 'en');
       const meta = [
         ['citation_title', full], ['citation_author', site.name], ['citation_publication_date', p.date.slice(0, 4)],
         ['citation_technical_report_institution', site.name], ['citation_technical_report_number', p.ref],
-        ['citation_language', p.language], ['citation_fulltext_html_url', p.url], ['citation_abstract_html_url', ORIGIN + path],
+        ['citation_language', file ? file.lang : p.language], ['citation_fulltext_html_url', p.url], ['citation_abstract_html_url', ORIGIN + path],
+        ...(file ? [['citation_pdf_url', ORIGIN + file.path]] : []),
       ].map(([n, c]) => `<meta name="${n}" content="${esc(c)}">`).join('');
       out.push({
         key: `publication:${p.slug}`, lang, section: 'publications', path, alt: P.publication(o, p), cls: 'pub-detail', ogType: 'article',
-        peek: { title: latin(p.title, lang), text: latin(p.subtitle, lang) },
-        title: titled(p.title), ogTitle: full, description: `${strip(seriesLine(p, lang))}. ${p.subtitle}`, body: publicationBody(p, lang),
+        peek: { title: pubTitle(p, lang), text: pubSubtitle(p, lang) },
+        title: titled(title), ogTitle: full, description: `${strip(seriesLine(p, lang))}. ${subtitle}`, body: publicationBody(p, lang),
         headExtra: meta,
-        card: { key: `publication-${p.slug}`, kicker: `${p[lang].series}${dot(lang)}${p.ref}`, title: p.title, sub: p.subtitle, latinTitle: true },
+        card: { key: `publication-${p.slug}`, kicker: `${p[lang].series}${dot(lang)}${p.ref}`, title, sub: subtitle, latinTitle: !arabic },
         jsonld: [
           {
-            '@type': 'Report', name: full, headline: p.title, alternativeHeadline: p.subtitle, reportNumber: p.ref, datePublished: p.date,
-            inLanguage: p.language, url: p.url, mainEntityOfPage: ORIGIN + path, author: ORG_REF, publisher: ORG_REF,
+            '@type': 'Report', name: full, headline: title, alternativeHeadline: subtitle, reportNumber: p.ref, datePublished: p.date,
+            inLanguage: (p.files || []).length ? p.files.map(f => f.lang) : p.language, url: p.url, mainEntityOfPage: ORIGIN + path, author: ORG_REF, publisher: ORG_REF,
+            ...(p.licence ? { license: LICENCES[p.licence] } : {}),
+            ...((p.files || []).length ? { encoding: p.files.map(f => ({ '@type': 'MediaObject', contentUrl: ORIGIN + f.path, encodingFormat: 'application/pdf', inLanguage: f.lang })) } : {}),
           },
-          crumbs(lang, [home, [L.nav.publications, P.publications(lang)], [p.title, path]]),
+          crumbs(lang, [home, [L.nav.publications, P.publications(lang)], [title, path]]),
         ],
       });
     }
@@ -918,7 +1092,6 @@ function sitemap(all) {
   return `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
 ${urls.join('\n')}
-<url><loc>${ORIGIN}/law-xray/</loc></url>
 </urlset>
 `;
 }
@@ -943,7 +1116,7 @@ export function build() {
   return all;
 }
 
-if (import.meta.url === pathToFileURL(process.argv[1]).href) {
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
   try {
     build();
   } catch (e) {

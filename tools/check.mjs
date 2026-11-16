@@ -53,7 +53,6 @@ for (const pg of pages()) {
       if (target.length > 1 && !seen.has(target.slice(1))) fail(out, `missing anchor ${target}`);
       continue;
     }
-    if (target.startsWith('/law-xray/')) continue;
     const dest = fileFor(target);
     if (!dest) { fail(out, `broken link ${target}`); continue; }
     const hash = target.split('#')[1];
