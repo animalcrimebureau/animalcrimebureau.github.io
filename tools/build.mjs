@@ -625,6 +625,7 @@ function layout(pg) {
     `<script src="/assets/site.js?v=${jsVersion}" defer></script>`,
     `<script type="speculationrules">${SPECULATION}</script>`,
     pg.headExtra || '',
+    pg.path === '/' && site.googleSiteVerification ? `<meta name="google-site-verification" content="${esc(site.googleSiteVerification)}">` : '',
     ...(pg.jsonld || []).map(j => `<script type="application/ld+json">${JSON.stringify({ '@context': 'https://schema.org', ...j }).replace(/</g, '\\u003c')}</script>`),
   ].filter(Boolean).join('');
 
@@ -779,6 +780,7 @@ function validate() {
   const asked = [site.en.reportItems, site.ar.reportItems].map(list => (Array.isArray(list) ? list.filter(x => String(x).trim()).length : 0));
   need(asked[0] > 0 && asked[0] === asked[1], `site.json: "reportItems" lists ${asked[0]} things in English and ${asked[1]} in Arabic`);
   need(!site.donateUrl || /^https:\/\/[^\s"<>]+$/.test(site.donateUrl), `site.json: "donateUrl" should be the campaign's full address, starting with https://`);
+  need(!site.googleSiteVerification || /^[A-Za-z0-9_-]{20,100}$/.test(site.googleSiteVerification), `site.json: "googleSiteVerification" should be only the content of Google's tag, without the tag around it`);
   // The two languages say the same about the campaign: the same texts, and as many things the money covers.
   for (const key of ['donate', 'donateHeading', 'donateText', 'donateButton', 'donateCovers', 'donateHow', 'donateDescription']) {
     need(!site.donateUrl || (site.en[key]?.trim() && site.ar[key]?.trim()), `site.json: "${key}" is needed in English and Arabic while "donateUrl" is set`);

@@ -125,6 +125,11 @@ changes. The button is a plain link, so the pages still load nothing from
 another site. When the campaign closes, empty `donateUrl`: the button goes and
 the pages say Support this work again.
 
+**Search engines.** To verify the site in Google Search Console with an HTML
+tag, put only the tag's `content` in `googleSiteVerification` in
+`src/data/site.json` and build: the home page then carries the tag. Leave it in
+place afterwards, since Google checks it again from time to time.
+
 **Law X-ray.** `src/data/xray.json` holds the data of Working Paper No. 2 as
 published: each definition or provision of Egypt's law, the text it is compared
 with in the Emirati and Bahraini laws, and the words they share. The build finds
