@@ -125,8 +125,11 @@ changes. The button is a plain link, so the pages still load nothing from
 another site. When the campaign closes, empty `donateUrl`: the button goes and
 the pages say Support this work again.
 
-**Search engines.** To verify the site in Google Search Console with an HTML
-tag, put only the tag's `content` in `googleSiteVerification` in
+**Search engines.** The site is registered in Google Search Console, verified
+through the domain's DNS, and in Bing Webmaster Tools, imported from Google.
+Both read `sitemap.xml`, which the build keeps up to date, so a new page needs
+nothing more. To add an HTML tag as a second way of verifying the site with
+Google, put only the tag's `content` in `googleSiteVerification` in
 `src/data/site.json` and build: the home page then carries the tag. Leave it in
 place afterwards, since Google checks it again from time to time.
 
