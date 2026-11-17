@@ -97,6 +97,12 @@ A publication issued in Arabic also takes its Arabic `title` and `subtitle` unde
 `ar`: the Arabic pages then show them, open the Arabic file first and no longer
 mark the publication as English only.
 
+Running the images also draws the cover of the publication's Substack post, at
+`assets/share/substack/<slug>.png`. It is 3:2, the shape Substack's lists crop a
+post's image to, and its text stays clear of what Substack's link previews cut
+off. Upload it in the post's settings as its social preview image; it is not
+shown in the post itself.
+
 **Draw a fine or a measurement.** The home ledger draws, on one scale, the
 highest amount in pounds in each penalty, from `fine` in
 `src/data/ledger.json`, beside the penalty as the law writes it and its

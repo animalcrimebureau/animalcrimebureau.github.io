@@ -1,7 +1,8 @@
 #!/usr/bin/env node
-// Draws the app icons and the link-preview image of every page with the
-// browser that ships with Playwright. Run after adding a page or changing a
-// title, then build again: node tools/images.mjs && node tools/build.mjs
+// Draws the app icons, the link-preview image of every page and the cover of
+// every publication's Substack post with the browser that ships with
+// Playwright. Run after adding a page or changing a title, then build again:
+// node tools/images.mjs && node tools/build.mjs
 
 import { readFileSync, mkdirSync } from 'node:fs';
 import { createRequire } from 'node:module';
@@ -23,20 +24,26 @@ function icon(size, inset) {
   .i{position:absolute;inset:${inset}px}.i svg{width:100%;height:100%;display:block}</style></head><body><div class="i">${LOGO}</div></body></html>`;
 }
 
-function card(c, lang) {
+// A link preview is 1200 by 630. A Substack cover is 3:2, the shape Substack's lists crop a post's image to,
+// and keeps its text 200 pixels from the top and bottom, outside what its 16:9 link previews cut off.
+const LINK = { width: 1200, height: 630, scale: 1, pad: [64, 80, 60], center: false };
+const COVER = { width: 1800, height: 1200, scale: 1.5, pad: [200, 120, 200], center: true };
+
+function card(c, lang, shape = LINK) {
   const rtl = lang === 'ar';
   const title = strip(c.title);
   const long = title.length > 70;
+  const px = n => `${+(n * shape.scale).toFixed(2)}px`;
   return `<!doctype html><html lang="${lang}"${rtl ? ' dir="rtl"' : ''}><head><style>${FACES}
-  *{box-sizing:border-box}html,body{margin:0;width:1200px;height:630px;background:#fff;color:#111}
-  body{font-family:"Public Sans","IBM Plex Sans Arabic",sans-serif;padding:64px 80px 60px;display:flex;flex-direction:column}
-  .brand{direction:ltr;display:flex;align-items:center;gap:18px;font-size:30px;font-weight:500;letter-spacing:-.005em;align-self:flex-start}
-  .brand svg{width:56px;height:auto;display:block}
-  .body{margin-top:auto;padding-inline-start:30px;border-inline-start:3px solid #111}
-  .k{font-size:27px;color:#5C5C5C;margin:0 0 14px;line-height:1.35}
-  .t{font-size:${long ? 46 : 62}px;font-weight:500;line-height:${rtl ? 1.45 : 1.14};letter-spacing:-.015em;margin:0;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
-  .s{font-size:28px;color:#5C5C5C;line-height:${rtl ? 1.7 : 1.4};margin:20px 0 0;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-  .u{direction:ltr;margin-top:46px;font-size:22px;color:#767676;align-self:flex-start}
+  *{box-sizing:border-box}html,body{margin:0;width:${shape.width}px;height:${shape.height}px;background:#fff;color:#111}
+  body{font-family:"Public Sans","IBM Plex Sans Arabic",sans-serif;padding:${shape.pad.map(n => `${n}px`).join(' ')};display:flex;flex-direction:column}
+  .brand{direction:ltr;display:flex;align-items:center;gap:${px(18)};font-size:${px(30)};font-weight:500;letter-spacing:-.005em;align-self:flex-start}
+  .brand svg{width:${px(56)};height:auto;display:block}
+  .body{margin-${shape.center ? 'block' : 'top'}:auto;padding-inline-start:${px(30)};border-inline-start:${px(3)} solid #111}
+  .k{font-size:${px(27)};color:#5C5C5C;margin:0 0 ${px(14)};line-height:1.35}
+  .t{font-size:${px(long ? 46 : 62)};font-weight:500;line-height:${rtl ? 1.45 : 1.14};letter-spacing:-.015em;margin:0;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+  .s{font-size:${px(28)};color:#5C5C5C;line-height:${rtl ? 1.7 : 1.4};margin:${px(20)} 0 0;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+  .u{direction:ltr;margin-top:${px(46)};font-size:${px(22)};color:#767676;align-self:flex-start}
   .lt{direction:ltr;unicode-bidi:isolate}
   .head{display:flex;justify-content:space-between;align-items:flex-start}
   .bars{direction:ltr;display:flex;gap:9px;align-items:flex-end}
@@ -70,5 +77,18 @@ for (const pg of pages()) {
   await page.evaluate(() => document.fonts.ready);
   await page.screenshot({ path: join(ROOT, out) });
 }
+
+// The cover of each publication's post on Substack, in English like the posts. It is uploaded in the
+// post's settings, as its social preview image, and is not shown in the post itself.
+await page.setViewportSize({ width: COVER.width, height: COVER.height });
+mkdirSync(join(ROOT, 'assets/share/substack'), { recursive: true });
+let covers = 0;
+for (const pg of pages()) {
+  if (pg.lang !== 'en' || !pg.card?.key.startsWith('publication-')) continue;
+  await page.setContent(card(pg.card, 'en', COVER));
+  await page.evaluate(() => document.fonts.ready);
+  await page.screenshot({ path: join(ROOT, `assets/share/substack/${pg.card.key.slice('publication-'.length)}.png`) });
+  covers++;
+}
 await browser.close();
-console.log(`Drew 3 icons and ${done.size} link previews.`);
+console.log(`Drew 3 icons, ${done.size} link previews and ${covers} Substack covers.`);
