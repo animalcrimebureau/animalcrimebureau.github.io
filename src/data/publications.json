@@ -1,5 +1,22 @@
 [
   {
+    "slug": "field-note-1",
+    "ref": "ACB/FN/001",
+    "date": "2026-11",
+    "language": "en",
+    "url": "https://animalcrimebureau.substack.com/p/doors-and-a-corridor",
+    "title": "Doors and a Corridor",
+    "subtitle": "A Crab Native in One of Egypt’s Seas and Invasive in the Other",
+    "en": {
+      "series": "Field Note No. 1",
+      "date": "November 2026"
+    },
+    "ar": {
+      "series": "ملاحظة ميدانية رقم ١",
+      "date": "نوفمبر ٢٠٢٦"
+    }
+  },
+  {
     "slug": "working-paper-2",
     "ref": "ACB/WP/002",
     "date": "2026-10",

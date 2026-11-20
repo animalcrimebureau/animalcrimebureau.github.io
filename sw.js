@@ -2,9 +2,9 @@
 // Pages are fetched from the network first, so corrections reach readers at
 // once, and fall back to the saved copy without a connection. Every page of
 // the site is saved when the worker installs.
-const VERSION = '637359ac27';
+const VERSION = '59e4cbe6c9';
 const CACHE = 'acb-' + VERSION;
-const PAGES = ["/","/law/","/law/29-2023/1/","/law-xray/","/register/","/register/ACB-2026-001/","/publications/","/publications/working-paper-2/","/publications/method-1/","/publications/investigation-report-1/","/publications/working-paper-1/","/about/","/support/","/ar/","/ar/law/","/ar/law/29-2023/1/","/ar/law-xray/","/ar/register/","/ar/register/ACB-2026-001/","/ar/publications/","/ar/publications/working-paper-2/","/ar/publications/method-1/","/ar/publications/investigation-report-1/","/ar/publications/working-paper-1/","/ar/about/","/ar/support/","/offline.html"];
+const PAGES = ["/","/law/","/law/29-2023/1/","/law-xray/","/register/","/register/ACB-2026-001/","/publications/","/publications/field-note-1/","/publications/working-paper-2/","/publications/method-1/","/publications/investigation-report-1/","/publications/working-paper-1/","/about/","/support/","/ar/","/ar/law/","/ar/law/29-2023/1/","/ar/law-xray/","/ar/register/","/ar/register/ACB-2026-001/","/ar/publications/","/ar/publications/field-note-1/","/ar/publications/working-paper-2/","/ar/publications/method-1/","/ar/publications/investigation-report-1/","/ar/publications/working-paper-1/","/ar/about/","/ar/support/","/offline.html"];
 const ASSETS = ["/assets/site.css?v=12161a89d7","/assets/site.js?v=3ff7e68bcb","/assets/img/acb-logo.svg","/assets/img/favicon.svg","/assets/img/icon-192.png","/assets/fonts/public-sans-latin.woff2","/assets/fonts/plex-arabic-400-arabic.woff2","/assets/fonts/plex-arabic-500-arabic.woff2","/assets/fonts/amiri-400-arabic.woff2"];
 // Only this site's own sections, listed by the build from its pages; anything else on the
 // domain is left alone.
